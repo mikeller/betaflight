@@ -23,8 +23,9 @@
 extern "C" {
     #include "io/rc_controls.h"
 
+    #include "common/filter.h"
+
     #include "sensors/battery.h"
-    #include "flight/lowpass.h"
     #include "io/beeper.h"
 }
 
@@ -298,13 +299,6 @@ void delay(uint32_t ms)
 {
     UNUSED(ms);
     return;
-}
-
-int32_t lowpassFixed(lowpass_t *filter, int32_t in, int16_t freq)
-{
-    UNUSED(filter);
-    UNUSED(freq);
-    return in;
 }
 
 void beeper(beeperMode_e mode)

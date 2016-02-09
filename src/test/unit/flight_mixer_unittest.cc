@@ -27,6 +27,7 @@ extern "C" {
 
     #include "common/axis.h"
     #include "common/maths.h"
+    #include "common/filter.h"
 
     #include "drivers/sensor.h"
     #include "drivers/accgyro.h"
@@ -39,7 +40,6 @@ extern "C" {
     #include "flight/pid.h"
     #include "flight/imu.h"
     #include "flight/mixer.h"
-    #include "flight/lowpass.h"
 
     #include "io/escservo.h"
     #include "io/gimbal.h"
