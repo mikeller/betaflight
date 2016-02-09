@@ -32,8 +32,11 @@ extern "C" {
     #include "drivers/accgyro.h"
     #include "drivers/pwm_mapping.h"
 
+    #include "io/rc_controls.h"
+
     #include "sensors/sensors.h"
     #include "sensors/acceleration.h"
+    #include "sensors/battery.h"
 
     #include "rx/rx.h"
     #include "flight/pid.h"
