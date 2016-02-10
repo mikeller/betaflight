@@ -393,6 +393,7 @@ TEST_F(CustomMixerIntegrationTest, TestCustomMixer)
 extern "C" {
 attitudeEulerAngles_t attitude;
 rxRuntimeConfig_t rxRuntimeConfig;
+float calculateVbatPidCompensation(void) {return 0.0f;}
 
 int16_t axisPID[XYZ_AXIS_COUNT];
 int16_t rcCommand[4];
