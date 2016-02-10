@@ -23,8 +23,6 @@
 extern "C" {
     #include "io/rc_controls.h"
 
-    #include "common/filter.h"
-
     #include "sensors/battery.h"
     #include "io/beeper.h"
 }
@@ -272,8 +270,13 @@ TEST(BatteryTest, RollOverPattern2)
 
 extern "C" {
 
+#include "common/filter.h"
+
 uint8_t armingFlags = 0;
 int16_t rcCommand[4] = {0,0,0,0};
+
+uint32_t micros(void) {return 0;}
+float filterApplyPt1(float input, filterStatePt1_t *filter, uint8_t f_cut, float dT) {UNUSED(input);UNUSED(filter);UNUSED(f_cut);UNUSED(dT);return 0.0f;}
 
 
 bool feature(uint32_t mask)
