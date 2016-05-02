@@ -38,6 +38,38 @@
 #include "accgyro_mpu.h"
 #include "accgyro_mpu6050.h"
 
+#include "common/axis.h"
+#include "common/color.h"
+
+#include "timer.h"
+#include "pwm_rx.h"
+#include "serial.h"
+
+#include "sensors/sensors.h"
+#include "sensors/boardalignment.h"
+#include "sensors/gyro.h"
+#include "sensors/acceleration.h"
+#include "sensors/barometer.h"
+#include "sensors/battery.h"
+
+#include "io/beeper.h"
+#include "io/escservo.h"
+#include "io/gimbal.h"
+#include "io/serial.h"
+#include "io/rc_controls.h"
+#include "io/ledstrip.h"
+
+#include "flight/mixer.h"
+#include "flight/pid.h"
+#include "flight/imu.h"
+#include "flight/failsafe.h"
+
+#include "telemetry/telemetry.h"
+
+#include "config/config.h"
+#include "config/config_profile.h"
+#include "config/config_master.h"
+
 extern uint8_t mpuLowPassFilter;
 
 //#define DEBUG_MPU_DATA_READY_INTERRUPT
@@ -86,12 +118,23 @@ static void mpu6050AccInit(void)
 {
     mpuIntExtiInit();
 
+    uint8_t acc_scale_factor;
+    switch (masterConfig.acc_max_g) {
+    case ACC_MAX_8G:
+        acc_scale_factor = 8;
+        break;
+    case ACC_MAX_16G:
+    default:
+        acc_scale_factor = 4;
+        break;
+    }
+
     switch (mpuDetectionResult.resolution) {
         case MPU_HALF_RESOLUTION:
-            acc_1G = 256 * 4;
+            acc_1G = 256 * acc_scale_factor;
             break;
         case MPU_FULL_RESOLUTION:
-            acc_1G = 512 * 4;
+            acc_1G = 512 * acc_scale_factor;
             break;
     }
 }
@@ -111,8 +154,16 @@ static void mpu6050GyroInit(uint8_t lpf)
     ack = mpuConfiguration.write(MPU_RA_GYRO_CONFIG, INV_FSR_2000DPS << 3);   //GYRO_CONFIG   -- FS_SEL = 3: Full scale set to 2000 deg/sec
 
     // ACC Init stuff.
-    // Accel scale 8g (4096 LSB/g)
-    ack = mpuConfiguration.write(MPU_RA_ACCEL_CONFIG, INV_FSR_16G << 3);
+    switch (masterConfig.acc_max_g) {
+    case ACC_MAX_8G:
+        // Accel scale 8g (4096 LSB/g)
+        ack = mpuConfiguration.write(MPU_RA_ACCEL_CONFIG, INV_FSR_8G << 3);
+        break;
+    case ACC_MAX_16G:
+    default:
+        ack = mpuConfiguration.write(MPU_RA_ACCEL_CONFIG, INV_FSR_16G << 3);
+        break;
+    }
 
     ack = mpuConfiguration.write(MPU_RA_INT_PIN_CFG,
             0 << 7 | 0 << 6 | 0 << 5 | 0 << 4 | 0 << 3 | 0 << 2 | 1 << 1 | 0 << 0); // INT_PIN_CFG   -- INT_LEVEL_HIGH, INT_OPEN_DIS, LATCH_INT_DIS, INT_RD_CLEAR_DIS, FSYNC_INT_LEVEL_HIGH, FSYNC_INT_DIS, I2C_BYPASS_EN, CLOCK_DIS

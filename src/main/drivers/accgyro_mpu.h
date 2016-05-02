@@ -160,6 +160,11 @@ typedef enum {
     MPU_FULL_RESOLUTION
 } mpu6050Resolution_e;
 
+typedef enum {
+    ACC_MAX_8G = 0,
+    ACC_MAX_16G = 1
+} accMaxG;
+
 typedef struct mpuDetectionResult_s {
     detectedMPUSensor_e sensor;
     mpu6050Resolution_e resolution;

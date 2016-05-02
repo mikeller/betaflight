@@ -42,6 +42,29 @@
 #include "accgyro_mpu.h"
 #include "accgyro_spi_mpu6000.h"
 
+#include "timer.h"
+#include "pwm_rx.h"
+
+#include "sensors/sensors.h"
+#include "sensors/boardalignment.h"
+#include "sensors/gyro.h"
+#include "sensors/acceleration.h"
+#include "sensors/barometer.h"
+
+#include "io/beeper.h"
+#include "io/escservo.h"
+#include "io/gimbal.h"
+#include "io/serial.h"
+
+#include "flight/mixer.h"
+#include "flight/pid.h"
+#include "flight/imu.h"
+
+#include "telemetry/telemetry.h"
+
+#include "config/config_profile.h"
+#include "config/config_master.h"
+
 static void mpu6000AccAndGyroInit(void);
 
 static bool mpuSpi6000InitDone = false;
@@ -146,7 +169,15 @@ void mpu6000SpiAccInit(void)
 {
     mpuIntExtiInit();
 
-    acc_1G = 512 * 4;
+    switch (masterConfig.acc_max_g) {
+    case ACC_MAX_8G:
+        acc_1G = 512 * 8;
+        break;
+    case ACC_MAX_16G:
+    default:
+        acc_1G = 512 * 4;
+        break;
+    }
 }
 
 bool mpu6000SpiDetect(void)
@@ -231,7 +262,15 @@ static void mpu6000AccAndGyroInit(void) {
     delayMicroseconds(15);
 
     // Accel +/- 8 G Full Scale
-    mpu6000WriteRegister(MPU_RA_ACCEL_CONFIG, INV_FSR_16G << 3);
+    switch (masterConfig.acc_max_g) {
+    case ACC_MAX_8G:
+        mpu6000WriteRegister(MPU_RA_ACCEL_CONFIG, INV_FSR_8G << 3);
+        break;
+    case ACC_MAX_16G:
+    default:
+        mpu6000WriteRegister(MPU_RA_ACCEL_CONFIG, INV_FSR_16G << 3);
+        break;
+    }
     delayMicroseconds(15);
 
 

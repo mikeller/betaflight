@@ -513,6 +513,7 @@ static void resetConf(void)
     masterConfig.accDeadband.xy = 40;
     masterConfig.accDeadband.z = 40;
     masterConfig.acc_unarmedcal = 1;
+    masterConfig.acc_max_g = 1;
 
     resetBarometerConfig(&masterConfig.barometerConfig);
 

@@ -79,6 +79,7 @@ typedef struct master_t {
     accDeadband_t accDeadband;
     barometerConfig_t barometerConfig;
     uint8_t acc_unarmedcal;                 // turn automatic acc compensation on/off
+    uint8_t acc_max_g;
 
     uint16_t throttle_correction_angle;     // the angle when the throttle correction is maximal. in 0.1 degres, ex 225 = 22.5 ,30.0, 450 = 45.0 deg
     uint8_t throttle_correction_value;      // the correction that will be applied at throttle_correction_angle.

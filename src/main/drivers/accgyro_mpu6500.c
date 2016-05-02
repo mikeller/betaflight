@@ -35,6 +35,38 @@
 #include "accgyro_mpu.h"
 #include "accgyro_mpu6500.h"
 
+#include "common/axis.h"
+#include "common/color.h"
+
+#include "timer.h"
+#include "pwm_rx.h"
+#include "serial.h"
+
+#include "sensors/sensors.h"
+#include "sensors/boardalignment.h"
+#include "sensors/gyro.h"
+#include "sensors/acceleration.h"
+#include "sensors/barometer.h"
+#include "sensors/battery.h"
+
+#include "io/beeper.h"
+#include "io/escservo.h"
+#include "io/gimbal.h"
+#include "io/serial.h"
+#include "io/rc_controls.h"
+#include "io/ledstrip.h"
+
+#include "flight/mixer.h"
+#include "flight/pid.h"
+#include "flight/imu.h"
+#include "flight/failsafe.h"
+
+#include "telemetry/telemetry.h"
+
+#include "config/config.h"
+#include "config/config_profile.h"
+#include "config/config_master.h"
+
 extern uint16_t acc_1G;
 
 bool mpu6500AccDetect(acc_t *acc)
@@ -69,7 +101,15 @@ void mpu6500AccInit(void)
 {
     mpuIntExtiInit();
 
-    acc_1G = 512 * 4;
+    switch (masterConfig.acc_max_g) {
+    case ACC_MAX_8G:
+        acc_1G = 512 * 8;
+        break;
+    case ACC_MAX_16G:
+    default:
+        acc_1G = 512 * 4;
+        break;
+    }
 }
 
 void mpu6500GyroInit(uint8_t lpf)
@@ -101,7 +141,15 @@ void mpu6500GyroInit(uint8_t lpf)
     delay(15);
     mpuConfiguration.write(MPU_RA_GYRO_CONFIG, INV_FSR_2000DPS << 3);
     delay(15);
-    mpuConfiguration.write(MPU_RA_ACCEL_CONFIG, INV_FSR_16G << 3);
+    switch (masterConfig.acc_max_g) {
+    case ACC_MAX_8G:
+        mpuConfiguration.write(MPU_RA_ACCEL_CONFIG, INV_FSR_8G << 3);
+        break;
+    case ACC_MAX_16G:
+    default:
+        mpuConfiguration.write(MPU_RA_ACCEL_CONFIG, INV_FSR_16G << 3);
+        break;
+    }
     delay(15);
     mpuConfiguration.write(MPU_RA_CONFIG, lpf);
     delay(15);
