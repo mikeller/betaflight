@@ -494,7 +494,6 @@ void updateMagHold(void)
 void processRx(uint32_t currentTime)
 {
     static bool armedBeeperOn = false;
-    static bool airmodeIsActivated;
 
     calculateRxChannelsAndUpdateFailsafe(currentTime);
 
@@ -516,12 +515,6 @@ void processRx(uint32_t currentTime)
     }
 
     const throttleStatus_e throttleStatus = calculateThrottleStatus(&masterConfig.rxConfig, masterConfig.flight3DConfig.deadband3d_throttle);
-
-    if (isAirmodeActive() && ARMING_FLAG(ARMED)) {
-        if (rcCommand[THROTTLE] >= masterConfig.rxConfig.airModeActivateThreshold) airmodeIsActivated = true; // Prevent Iterm from being reset
-    } else {
-        airmodeIsActivated = false;
-    }
 
     // When armed and motors aren't spinning, do beeps and then disarm
     // board after delay so users without buzzer won't lose fingers.
@@ -571,24 +564,14 @@ void processRx(uint32_t currentTime)
 
     processRcStickPositions(&masterConfig.rxConfig, throttleStatus, masterConfig.armingConfig.disarm_kill_switch);
 
-    /* In airmode Iterm should be prevented to grow when Low thottle and Roll + Pitch Centered.
-     This is needed to prevent Iterm winding on the ground, but keep full stabilisation on 0 throttle while in air */
-    if (throttleStatus == THROTTLE_LOW && !airmodeIsActivated) {
-        pidResetErrorGyroState();
-        if (currentProfile->pidProfile.pidAtMinThrottle)
-            pidSetStabilisationState(PID_STABILISATION_ON);
-        else
-            pidSetStabilisationState(PID_STABILISATION_OFF);
-    } else {
-        pidSetStabilisationState(PID_STABILISATION_ON);
-    }
+    pidSetStabilisationState(PID_STABILISATION_ON);
 
     // Prevent motor windup on when on ground
     // rcCommand in the range -500 to 500 at this point
     // create a center band slightly wider than the deadband
     const int centerBand = masterConfig.rcControlsConfig.deadband + 4;
     const int yawCenterBand = masterConfig.rcControlsConfig.yaw_deadband + 4;
-    if (rcCommand[THROTTLE] > 1200
+    if (!isAirmodeActive() || rcCommand[THROTTLE] > masterConfig.rxConfig.airModeActivateThreshold
             || rcCommand[ROLL]  < -centerBand || rcCommand[ROLL]  > centerBand
             || rcCommand[PITCH] < -centerBand || rcCommand[PITCH] > centerBand
             || rcCommand[YAW]   < -yawCenterBand || rcCommand[YAW]   > yawCenterBand) {
@@ -602,7 +585,14 @@ void processRx(uint32_t currentTime)
             if ((accZ > 80) && (accZ < 110)) {
                 // accelerometer  Z readings is in the range 0.80g - 1.10g, so we are not in free fall
                 // so don't allow ITerm to wind-up
-                pidSetStabilisationState(PID_STABILISATION_ZERO_ITERM);
+    /* In airmode Iterm should be prevented to grow when Low thottle and Roll + Pitch Centered.
+     This is needed to prevent Iterm winding on the ground, but keep full stabilisation on 0 throttle while in air */
+
+                pidResetErrorGyroState();
+                if (currentProfile->pidProfile.pidAtMinThrottle)
+                    pidSetStabilisationState(PID_STABILISATION_ZERO_ITERM);
+                else
+                    pidSetStabilisationState(PID_STABILISATION_OFF);
             }
         }
     }
