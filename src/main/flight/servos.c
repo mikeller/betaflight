@@ -254,7 +254,8 @@ STATIC_UNIT_TESTED void forwardAuxChannelsToServos(uint8_t firstServoIndex)
 
     uint8_t servoOffset;
     for (servoOffset = 0; servoOffset < MAX_AUX_CHANNEL_COUNT && channelOffset < MAX_SUPPORTED_RC_CHANNEL_COUNT; servoOffset++) {
-        pwmWriteServo(firstServoIndex + servoOffset, rcData[channelOffset++]);
+        //pwmWriteServo(firstServoIndex + servoOffset, rcData[channelOffset++]);
+        pwmWriteServo(firstServoIndex + servoOffset, scaleRange(rcData[channelOffset++], 1000, 2000, 0, 498));
     }
 }
 
