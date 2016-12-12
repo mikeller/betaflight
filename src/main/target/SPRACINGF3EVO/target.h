@@ -17,7 +17,11 @@
 
 #pragma once
 
+#ifdef TINYBEEF3
+#define TARGET_BOARD_IDENTIFIER "TBF3"
+#else
 #define TARGET_BOARD_IDENTIFIER "SPEV"
+#endif
 
 #define CONFIG_FASTLOOP_PREFERRED_ACC ACC_DEFAULT
 
@@ -46,8 +50,13 @@
 #define ACC
 #define USE_ACC_SPI_MPU6500
 
+#ifdef TINYBEEF3
+#define ACC_MPU6500_ALIGN       CW270_DEG
+#define GYRO_MPU6500_ALIGN      CW270_DEG
+#else
 #define ACC_MPU6500_ALIGN       CW180_DEG
 #define GYRO_MPU6500_ALIGN      CW180_DEG
+#endif
 
 #define BARO
 #define USE_BARO_BMP280
