@@ -65,6 +65,12 @@
 
 #define USB_IO
 
+#ifdef AIORACERF3
+#define USB_CABLE_DETECTION
+
+#define USB_DETECT_PIN          PB5
+#endif
+
 #define USE_VCP
 #define USE_UART1
 #define USE_UART2
