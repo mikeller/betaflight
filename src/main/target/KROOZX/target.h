@@ -33,7 +33,7 @@
 
 #define BEEPER                  PC1
 
-#define INVERTER_PIN_UART1      PB13
+#define UART1_INVERTER_PIN      PB13
 #define INVERTER_PIN_UART6      PB12
 
 #define MPU6000_CS_PIN          PB2

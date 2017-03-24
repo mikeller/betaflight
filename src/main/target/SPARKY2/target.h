@@ -30,7 +30,7 @@
 #define BEEPER                  PC9
 #define BEEPER_INVERTED
 
-#define INVERTER_PIN_UART6      PC6
+#define UART6_INVERTER_PIN      PC6
 
 #define USE_ESC_SENSOR
 

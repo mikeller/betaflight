@@ -44,7 +44,7 @@ static void usartConfigurePinInversion(uartPort_t *uartPort) {
 #ifdef USE_INVERTER
     if (inverted) {
         // Enable hardware inverter if available.
-        enableInverter(uartPort->USARTx, true);
+        enableInverter(uartPort->port.identifier, true);
     }
 #endif
 

@@ -17,10 +17,12 @@
 
 #pragma once
 
-#if defined(INVERTER_PIN_UART1) || defined(INVERTER_PIN_UART2) || defined(INVERTER_PIN_UART3) || defined(INVERTER_PIN_UART4) || defined(INVERTER_PIN_UART5) || defined(INVERTER_PIN_UART6)
+#if defined(STM32F1) || defined(STM32F4)
 #define USE_INVERTER
 #endif
 
+#include "io/serial.h"
+
 void initInverters(void);
 
-void enableInverter(USART_TypeDef *USARTx, bool on);
+void enableInverter(serialPortIdentifier_e port, bool on);

@@ -47,7 +47,7 @@
 //#define BARO_XCLR_PIN           PC13
 //#define BARO_EOC_PIN            PC14
 
-#define INVERTER_PIN_UART2        PB2 // PB2 (BOOT1) abused as inverter select GPIO
+#define UART2_INVERTER_PIN        PB2 // PB2 (BOOT1) abused as inverter select GPIO
 
 #define USE_EXTI
 #define MAG_INT_EXTI            PC14

@@ -3923,6 +3923,7 @@ const cliResourceValue_t resourceTable[] = {
 #endif
     { OWNER_SERIAL_TX,     PG_SERIAL_PIN_CONFIG, offsetof(serialPinConfig_t, ioTagTx[0]), SERIAL_PORT_MAX_INDEX },
     { OWNER_SERIAL_RX,     PG_SERIAL_PIN_CONFIG, offsetof(serialPinConfig_t, ioTagRx[0]), SERIAL_PORT_MAX_INDEX },
+    { OWNER_SERIAL_INV,    PG_SERIAL_PIN_CONFIG, offsetof(serialPinConfig_t, ioTagInv[0]), SERIAL_PORT_MAX_INDEX },
 };
 
 static ioTag_t *getIoTag(const cliResourceValue_t value, uint8_t index)

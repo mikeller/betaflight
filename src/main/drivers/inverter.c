@@ -20,12 +20,15 @@
 
 #include "platform.h"
 
-#include "io.h"
-#include "io_impl.h"
-
 #include "inverter.h"
 
 #ifdef USE_INVERTER
+#include "io.h"
+#include "io_impl.h"
+#include "serial.h"
+
+#include "fc/config.h"
+
 static void inverterSet(IO_t pin, bool on)
 {
     IOWrite(pin, on);
@@ -39,79 +42,24 @@ static void initInverter(ioTag_t ioTag)
 
     inverterSet(pin, false);
 }
-#endif
+
 
 void initInverters(void)
 {
-#ifdef INVERTER_PIN_UART1
-    initInverter(IO_TAG(INVERTER_PIN_UART1));
-#endif
-
-#ifdef INVERTER_PIN_UART2
-    initInverter(IO_TAG(INVERTER_PIN_UART2));
-#endif
-
-#ifdef INVERTER_PIN_UART3
-    initInverter(IO_TAG(INVERTER_PIN_UART3));
-#endif
-
-#ifdef INVERTER_PIN_UART4
-    initInverter(IO_TAG(INVERTER_PIN_UART4));
-#endif
-
-#ifdef INVERTER_PIN_UART5
-    initInverter(IO_TAG(INVERTER_PIN_UART5));
-#endif
-
-#ifdef INVERTER_PIN_UART6
-    initInverter(IO_TAG(INVERTER_PIN_UART6));
-#endif
+    for (unsigned port = 0; port < SERIAL_PORT_MAX_INDEX; port++) {
+        ioTag_t tag = serialPinConfig()->ioTagInv[port];
+        if (tag) {
+            initInverter(tag);
+        }
+    }
 }
 
-void enableInverter(USART_TypeDef *USARTx, bool on)
+void enableInverter(serialPortIdentifier_e port, bool on)
 {
-#ifdef USE_INVERTER
-    IO_t pin = IO_NONE;
-
-#ifdef INVERTER_PIN_UART1
-    if (USARTx == USART1) {
-        pin = IOGetByTag(IO_TAG(INVERTER_PIN_UART1));
+    ioTag_t tag = serialPinConfig()->ioTagInv[SERIAL_PORT_IDENTIFIER_TO_RESOURCE_INDEX(port)];
+    if (tag) {
+        IO_t pin = IOGetByTag(tag);
+        inverterSet(pin, on);
     }
-#endif
-
-#ifdef INVERTER_PIN_UART2
-    if (USARTx == USART2) {
-        pin = IOGetByTag(IO_TAG(INVERTER_PIN_UART2));
-    }
-#endif
-
-#ifdef INVERTER_PIN_UART3
-    if (USARTx == USART3) {
-        pin = IOGetByTag(IO_TAG(INVERTER_PIN_UART3));
-    }
-#endif
-
-#ifdef INVERTER_PIN_UART4
-    if (USARTx == UART4) {
-        pin = IOGetByTag(IO_TAG(INVERTER_PIN_UART4));
-    }
-#endif
-
-#ifdef INVERTER_PIN_UART5
-    if (USARTx == UART5) {
-        pin = IOGetByTag(IO_TAG(INVERTER_PIN_UART5));
-    }
-#endif
-
-#ifdef INVERTER_PIN_UART6
-    if (USARTx == USART6) {
-        pin = IOGetByTag(IO_TAG(INVERTER_PIN_UART6));
-    }
-#endif
-
-    inverterSet(pin, on);
-#else
-    UNUSED(USARTx);
-    UNUSED(on);
-#endif
 }
+#endif

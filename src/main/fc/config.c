@@ -338,6 +338,9 @@ void pgResetFn_serialPinConfig(serialPinConfig_t *serialPinConfig)
     for (int port = 0 ; port < SERIAL_PORT_MAX_INDEX ; port++) {
         serialPinConfig->ioTagRx[port] = IO_TAG(NONE);
         serialPinConfig->ioTagTx[port] = IO_TAG(NONE);
+#ifdef USE_INVERTER
+        serialPinConfig->ioTagInv[port] = IO_TAG(NONE);
+#endif
     }
 
     for (int index = 0 ; index < SERIAL_PORT_COUNT ; index++) {
@@ -346,48 +349,72 @@ void pgResetFn_serialPinConfig(serialPinConfig_t *serialPinConfig)
 #ifdef USE_UART1
             serialPinConfig->ioTagRx[SERIAL_PORT_IDENTIFIER_TO_RESOURCE_INDEX(SERIAL_PORT_USART1)] = IO_TAG(UART1_RX_PIN);
             serialPinConfig->ioTagTx[SERIAL_PORT_IDENTIFIER_TO_RESOURCE_INDEX(SERIAL_PORT_USART1)] = IO_TAG(UART1_TX_PIN);
+#if defined(USE_INVERTER) && defined(UART1_INVERTER_PIN)
+            serialPinConfig->ioTagInv[SERIAL_PORT_IDENTIFIER_TO_RESOURCE_INDEX(SERIAL_PORT_USART1)] = IO_TAG(UART1_INV_PIN);
+#endif
 #endif
             break;
         case SERIAL_PORT_USART2:
 #ifdef USE_UART2
             serialPinConfig->ioTagRx[SERIAL_PORT_IDENTIFIER_TO_RESOURCE_INDEX(SERIAL_PORT_USART2)] = IO_TAG(UART2_RX_PIN);
             serialPinConfig->ioTagTx[SERIAL_PORT_IDENTIFIER_TO_RESOURCE_INDEX(SERIAL_PORT_USART2)] = IO_TAG(UART2_TX_PIN);
+#if defined(USE_INVERTER) && defined(UART2_INVERTER_PIN)
+            serialPinConfig->ioTagInv[SERIAL_PORT_IDENTIFIER_TO_RESOURCE_INDEX(SERIAL_PORT_USART2)] = IO_TAG(UART2_INV_PIN);
+#endif
 #endif
             break;
         case SERIAL_PORT_USART3:
 #ifdef USE_UART3
             serialPinConfig->ioTagRx[SERIAL_PORT_IDENTIFIER_TO_RESOURCE_INDEX(SERIAL_PORT_USART3)] = IO_TAG(UART3_RX_PIN);
             serialPinConfig->ioTagTx[SERIAL_PORT_IDENTIFIER_TO_RESOURCE_INDEX(SERIAL_PORT_USART3)] = IO_TAG(UART3_TX_PIN);
+#if defined(USE_INVERTER) && defined(UART3_INVERTER_PIN)
+            serialPinConfig->ioTagInv[SERIAL_PORT_IDENTIFIER_TO_RESOURCE_INDEX(SERIAL_PORT_USART3)] = IO_TAG(UART3_INV_PIN);
+#endif
 #endif
             break;
         case SERIAL_PORT_UART4:
 #ifdef USE_UART4
             serialPinConfig->ioTagRx[SERIAL_PORT_IDENTIFIER_TO_RESOURCE_INDEX(SERIAL_PORT_UART4)] = IO_TAG(UART4_RX_PIN);
             serialPinConfig->ioTagTx[SERIAL_PORT_IDENTIFIER_TO_RESOURCE_INDEX(SERIAL_PORT_UART4)] = IO_TAG(UART4_TX_PIN);
+#if defined(USE_INVERTER) && defined(UART4_INVERTER_PIN)
+            serialPinConfig->ioTagInv[SERIAL_PORT_IDENTIFIER_TO_RESOURCE_INDEX(SERIAL_PORT_UART4)] = IO_TAG(UART4_INV_PIN);
+#endif
 #endif
             break;
         case SERIAL_PORT_UART5:
 #ifdef USE_UART5
             serialPinConfig->ioTagRx[SERIAL_PORT_IDENTIFIER_TO_RESOURCE_INDEX(SERIAL_PORT_UART5)] = IO_TAG(UART5_RX_PIN);
             serialPinConfig->ioTagTx[SERIAL_PORT_IDENTIFIER_TO_RESOURCE_INDEX(SERIAL_PORT_UART5)] = IO_TAG(UART5_TX_PIN);
+#if defined(USE_INVERTER) && defined(UART5_INVERTER_PIN)
+            serialPinConfig->ioTagInv[SERIAL_PORT_IDENTIFIER_TO_RESOURCE_INDEX(SERIAL_PORT_UART5)] = IO_TAG(UART5_INV_PIN);
+#endif
 #endif
             break;
         case SERIAL_PORT_USART6:
 #ifdef USE_UART6
             serialPinConfig->ioTagRx[SERIAL_PORT_IDENTIFIER_TO_RESOURCE_INDEX(SERIAL_PORT_USART6)] = IO_TAG(UART6_RX_PIN);
             serialPinConfig->ioTagTx[SERIAL_PORT_IDENTIFIER_TO_RESOURCE_INDEX(SERIAL_PORT_USART6)] = IO_TAG(UART6_TX_PIN);
+#if defined(USE_INVERTER) && defined(UART6_INVERTER_PIN)
+            serialPinConfig->ioTagInv[SERIAL_PORT_IDENTIFIER_TO_RESOURCE_INDEX(SERIAL_PORT_USART6)] = IO_TAG(UART6_INV_PIN);
+#endif
 #endif
             break;
         case SERIAL_PORT_USART7:
 #ifdef USE_UART7
             serialPinConfig->ioTagRx[SERIAL_PORT_IDENTIFIER_TO_RESOURCE_INDEX(SERIAL_PORT_USART7)] = IO_TAG(UART7_RX_PIN);
             serialPinConfig->ioTagTx[SERIAL_PORT_IDENTIFIER_TO_RESOURCE_INDEX(SERIAL_PORT_USART7)] = IO_TAG(UART7_TX_PIN);
+#if defined(USE_INVERTER) && defined(UART7_INVERTER_PIN)
+            serialPinConfig->ioTagInv[SERIAL_PORT_IDENTIFIER_TO_RESOURCE_INDEX(SERIAL_PORT_USART7)] = IO_TAG(UART7_INV_PIN);
+#endif
 #endif
             break;
         case SERIAL_PORT_USART8:
 #ifdef USE_UART8
             serialPinConfig->ioTagRx[SERIAL_PORT_IDENTIFIER_TO_RESOURCE_INDEX(SERIAL_PORT_USART8)] = IO_TAG(UART8_RX_PIN);
             serialPinConfig->ioTagTx[SERIAL_PORT_IDENTIFIER_TO_RESOURCE_INDEX(SERIAL_PORT_USART8)] = IO_TAG(UART8_TX_PIN);
+#if defined(USE_INVERTER) && defined(UART8_INVERTER_PIN)
+            serialPinConfig->ioTagInv[SERIAL_PORT_IDENTIFIER_TO_RESOURCE_INDEX(SERIAL_PORT_USART8)] = IO_TAG(UART8_INV_PIN);
+#endif
 #endif
             break;
         case SERIAL_PORT_SOFTSERIAL1:
