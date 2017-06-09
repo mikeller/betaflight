@@ -24,10 +24,6 @@
 #include "drivers/timer.h"
 #include "drivers/timer_def.h"
 
-#ifdef USE_BST
-#include "bus_bst.h"
-#endif
-
 
 const timerHardware_t timerHardware[USABLE_TIMER_CHANNEL_COUNT] = {
 
@@ -45,12 +41,3 @@ const timerHardware_t timerHardware[USABLE_TIMER_CHANNEL_COUNT] = {
     DEF_TIM(TIM16, CH1, PA6,  TIM_USE_LED,   1), // PWM11 - PB15
 
 };
-
-
-#ifdef USE_BST
-void targetBusInit(void)
-{
-    bstInit(BST_DEVICE);
-}
-#endif
-
