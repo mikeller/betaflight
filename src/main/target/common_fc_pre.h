@@ -118,6 +118,7 @@
 #define USE_SERIALRX_JETIEXBUS
 #define USE_SENSOR_NAMES
 #define USE_VIRTUAL_CURRENT_METER
+#define GPS
 #define VTX_COMMON
 #define VTX_CONTROL
 #define VTX_SMARTAUDIO
@@ -125,8 +126,7 @@
 #endif
 
 #if (FLASH_SIZE > 256)
-// Temporarily moved this here because of overflowing flash size on F3
-#define GPS
+#define ENABLE_EXTENDED_CMS_OSD_MENU
 
 #define USE_UNCOMMON_MIXERS
 #endif
