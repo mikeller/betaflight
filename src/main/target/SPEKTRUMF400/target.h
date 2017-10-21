@@ -53,22 +53,18 @@
 #define MPU9250_CS_PIN PB12
 #define MPU9250_SPI_INSTANCE SPI2
 
+#define USE_EXTI
+#define MPU_INT_EXTI PC13
 #define USE_MPU_DATA_READY_SIGNAL
 #define ENSURE_MPU_DATA_READY_IS_LOW
-#define MPU_INT_EXTI PC13
 
 #define GYRO
-#define USE_GYRO_MPU9250
 #define USE_GYRO_SPI_MPU9250
 #define GYRO_MPU9250_ALIGN CW270_DEG
 
 #define ACC
-#define USE_ACC_MPU9250
 #define USE_ACC_SPI_MPU9250
 #define ACC_MPU9250_ALIGN CW270_DEG
-
-#define USE_MPU_DATA_READY_SIGNAL
-#define USE_EXTI
 
 #define CMS
 
@@ -96,7 +92,7 @@
 #define UART4_RX_PIN PA1
 #define UART4_TX_PIN PA0
 
-#define UART5_RX_PIN PC12
+//#define UART5_RX_PIN PC12
 #define UART5_TX_PIN PC12
 
 #define USE_ESCSERIAL
@@ -112,6 +108,8 @@
 #define ADC_INSTANCE            ADC1
 #define VBAT_ADC_PIN            PC0
 #define CURRENT_METER_ADC_PIN   PC3
+
+#define TARGET_XTAL_MHZ         16
 
 #define TARGET_IO_PORTA 0xffff
 #define TARGET_IO_PORTB 0xffff
