@@ -410,11 +410,13 @@ void pidController(const pidProfile_t *pidProfile, const rollAndPitchTrims_t *an
     const float tpaFactor = getThrottlePIDAttenuation();
     const float motorMixRange = getMotorMixRange();
     static timeUs_t crashDetectedAtUs;
+/*
     static timeUs_t previousTime;
 
     // calculate actual deltaT
     const float deltaT = currentTimeUs - previousTime;
     previousTime = currentTimeUs;
+*/
 
     // Dynamic ki component to gradually scale back integration when above windup point
     const float dynKi = MIN((1.0f - motorMixRange) * ITermWindupPointInv, 1.0f);
@@ -517,7 +519,10 @@ void pidController(const pidProfile_t *pidProfile, const rollAndPitchTrims_t *an
             }
             const float rD = dynC * currentPidSetpoint - gyroRateFiltered;    // cr - y
             // Divide rate change by deltaT to get differential (ie dr/dt)
+/*
             float delta = (rD - previousRateError[axis]) / deltaT;
+*/
+            float delta = (rD - previousRateError[axis]) / dT;
 
             previousRateError[axis] = rD;
 
