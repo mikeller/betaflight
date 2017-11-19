@@ -22,6 +22,9 @@
 
 #include "build/build_config.h"
 
+#include "config/parameter_group.h"
+#include "config/parameter_group_ids.h"
+
 #include "drivers/exti.h"
 #include "drivers/io.h"
 #include "drivers/nvic.h"
@@ -45,6 +48,20 @@ extiCallbackRec_t hcsr04_extiCallbackRec;
 
 static IO_t echoIO;
 static IO_t triggerIO;
+
+PG_REGISTER_WITH_RESET_TEMPLATE(sonarConfig_t, sonarConfig, PG_SONAR_CONFIG, 0);
+
+#ifndef SONAR_TRIGGER_PIN
+#define SONAR_TRIGGER_PIN NONE
+#endif
+#ifndef SONAR_ECHO_PIN
+#define SONAR_ECHO_PIN    NONE
+#endif
+
+PG_RESET_TEMPLATE(sonarConfig_t, sonarConfig,
+    .triggerTag = IO_TAG(SONAR_TRIGGER_PIN),
+    .echoTag = IO_TAG(SONAR_ECHO_PIN)
+);
 
 void hcsr04_extiHandler(extiCallbackRec_t* cb)
 {

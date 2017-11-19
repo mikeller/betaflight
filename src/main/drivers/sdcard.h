@@ -20,9 +20,13 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "config/parameter_group.h"
+
 typedef struct sdcardConfig_s {
     uint8_t useDma;
 } sdcardConfig_t;
+
+PG_DECLARE(sdcardConfig_t, sdcardConfig);
 
 typedef struct sdcardMetadata_s {
     uint32_t numBlocks; /* Card capacity in 512-byte blocks*/

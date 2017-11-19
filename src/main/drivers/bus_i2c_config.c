@@ -196,6 +196,8 @@ typedef struct i2cDefaultConfig_s {
     bool pullUp;
 } i2cDefaultConfig_t;
 
+PG_DECLARE(i2cConfig_t, i2cConfig);
+
 static const i2cDefaultConfig_t i2cDefaultConfig[] = {
 #ifdef USE_I2C_DEVICE_1
     { I2CDEV_1, IO_TAG(I2C1_SCL), IO_TAG(I2C1_SDA), I2C1_OVERCLOCK, I2C1_PULLUP },
@@ -211,7 +213,6 @@ static const i2cDefaultConfig_t i2cDefaultConfig[] = {
 #endif
 };
 
-PG_DECLARE(i2cConfig_t, i2cConfig);
 PG_REGISTER_WITH_RESET_FN(i2cConfig_t, i2cConfig, PG_I2C_CONFIG, 0);
 
 void pgResetFn_i2cConfig(i2cConfig_t *i2cConfig)

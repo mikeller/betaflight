@@ -19,11 +19,15 @@
 
 // Video Character Display parameters
 
+#include "config/parameter_group.h"
+
 typedef struct vcdProfile_s {
     uint8_t video_system;
     int8_t h_offset;
     int8_t v_offset;
 } vcdProfile_t;
+
+PG_DECLARE(vcdProfile_t, vcdProfile);
 
 enum VIDEO_SYSTEMS {
     VIDEO_SYSTEM_AUTO = 0,

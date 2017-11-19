@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include "config/parameter_group.h"
 #include "drivers/io_types.h"
 
 typedef enum {
@@ -31,10 +32,14 @@ typedef struct ppmConfig_s {
     ioTag_t ioTag;
 } ppmConfig_t;
 
+PG_DECLARE(ppmConfig_t, ppmConfig);
+
 typedef struct pwmConfig_s {
     ioTag_t ioTags[PWM_INPUT_PORT_COUNT];
     inputFilteringMode_e inputFilteringMode;
 } pwmConfig_t;
+
+PG_DECLARE(pwmConfig_t, pwmConfig);
 
 void ppmRxInit(const ppmConfig_t *ppmConfig);
 void pwmRxInit(const pwmConfig_t *pwmConfig);

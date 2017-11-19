@@ -15,24 +15,30 @@
  * along with Cleanflight.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
+#include <stdbool.h>
 #include <stdint.h>
 
+#include "platform.h"
+
+#ifdef USE_FLASHFS
+
 #include "config/parameter_group.h"
-#include "drivers/io_types.h"
+#include "config/parameter_group_ids.h"
 
-typedef struct flashGeometry_s {
-    uint16_t sectors; // Count of the number of erasable blocks on the device
-    const uint16_t pageSize; // In bytes
-    uint32_t sectorSize; // This is just pagesPerSector * pageSize
-    uint32_t totalSize;  // This is just sectorSize * sectors
-    uint16_t pagesPerSector;
-} flashGeometry_t;
+#include "drivers/bus_spi.h"
+#include "drivers/io.h"
 
-typedef struct flashConfig_s {
-    ioTag_t csTag;
-    uint8_t spiDevice;
-} flashConfig_t;
+#include "flash.h"
 
-PG_DECLARE(flashConfig_t, flashConfig);
+PG_REGISTER_WITH_RESET_FN(flashConfig_t, flashConfig, PG_FLASH_CONFIG, 0);
+
+void pgResetFn_flashConfig(flashConfig_t *flashConfig)
+{
+#ifdef M25P16_CS_PIN
+    flashConfig->csTag = IO_TAG(M25P16_CS_PIN);
+#else
+    flashConfig->csTag = IO_TAG_NONE;
+#endif
+    flashConfig->spiDevice = SPI_DEV_TO_CFG(spiDeviceByInstance(M25P16_SPI_INSTANCE));
+}
+#endif

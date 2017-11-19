@@ -49,6 +49,7 @@ COMMON_SRC = \
             drivers/transponder_ir_arcitimer.c \
             drivers/transponder_ir_ilap.c \
             drivers/transponder_ir_erlt.c \
+            drivers/vcd.c \
             fc/config.c \
             fc/fc_dispatch.c \
             fc/fc_hardfaults.c \
@@ -189,7 +190,6 @@ COMMON_SRC := $(COMMON_SRC) $(OSD_SLAVE_SRC) $(COMMON_DEVICE_SRC)
 else
 COMMON_SRC := $(COMMON_SRC) $(FC_SRC) $(COMMON_DEVICE_SRC)
 endif
-
 
 SPEED_OPTIMISED_SRC := ""
 SIZE_OPTIMISED_SRC  := ""
@@ -347,6 +347,7 @@ endif
 
 ifneq ($(filter ONBOARDFLASH,$(FEATURES)),)
 SRC += \
+            drivers/flash.c \
             drivers/flash_m25p16.c \
             io/flashfs.c
 endif

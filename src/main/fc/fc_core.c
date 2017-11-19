@@ -36,6 +36,7 @@
 
 #include "drivers/gyro_sync.h"
 #include "drivers/light_led.h"
+#include "drivers/sound_beeper.h"
 #include "drivers/system.h"
 #include "drivers/time.h"
 #include "drivers/transponder_ir.h"

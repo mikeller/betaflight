@@ -27,6 +27,8 @@
 
 #include "common/utils.h"
 
+#include "config/parameter_group_ids.h"
+
 #include "drivers/nvic.h"
 #include "drivers/io.h"
 #include "timer.h"
@@ -109,6 +111,41 @@ static ppmDevice_t ppmDev;
 #define PPM_STABLE_FRAMES_REQUIRED_COUNT    25
 #define PPM_IN_MIN_NUM_CHANNELS     4
 #define PPM_IN_MAX_NUM_CHANNELS     PWM_PORTS_OR_PPM_CAPTURE_COUNT
+
+#ifdef USE_PWM
+PG_REGISTER_WITH_RESET_FN(pwmConfig_t, pwmConfig, PG_PWM_CONFIG, 0);
+#endif
+#ifdef USE_PPM
+PG_REGISTER_WITH_RESET_FN(ppmConfig_t, ppmConfig, PG_PPM_CONFIG, 0);
+#endif
+
+void pgResetFn_ppmConfig(ppmConfig_t *ppmConfig)
+{
+#ifdef PPM_PIN
+    ppmConfig->ioTag = IO_TAG(PPM_PIN);
+#else
+    for (int i = 0; i < USABLE_TIMER_CHANNEL_COUNT; i++) {
+        if (timerHardware[i].usageFlags & TIM_USE_PPM) {
+            ppmConfig->ioTag = timerHardware[i].tag;
+            return;
+        }
+    }
+
+    ppmConfig->ioTag = IO_TAG_NONE;
+#endif
+}
+
+void pgResetFn_pwmConfig(pwmConfig_t *pwmConfig)
+{
+    pwmConfig->inputFilteringMode = INPUT_FILTERING_DISABLED;
+    int inputIndex = 0;
+    for (int i = 0; i < USABLE_TIMER_CHANNEL_COUNT && inputIndex < PWM_INPUT_PORT_COUNT; i++) {
+        if (timerHardware[i].usageFlags & TIM_USE_PWM) {
+            pwmConfig->ioTags[inputIndex] = timerHardware[i].tag;
+            inputIndex++;
+        }
+    }
+}
 
 bool isPPMDataBeingReceived(void)
 {
@@ -402,7 +439,6 @@ void pwmRxInit(const pwmConfig_t *pwmConfig)
     }
 }
 
-#define UNUSED_PPM_TIMER_REFERENCE 0
 #define FIRST_PWM_PORT 0
 
 void ppmAvoidPWMTimerClash(TIM_TypeDef *pwmTimer)

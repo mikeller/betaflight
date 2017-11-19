@@ -114,4 +114,6 @@ typedef struct spiPinConfig_s {
     ioTag_t ioTagMosi[SPIDEV_COUNT];
 } spiPinConfig_t;
 
+PG_DECLARE(spiPinConfig_t, spiPinConfig);
+
 void spiPinConfigure(void);

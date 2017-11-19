@@ -20,19 +20,50 @@
 
 #include "platform.h"
 
+#ifdef USE_ADC
+
 #include "build/build_config.h"
 #include "build/debug.h"
+
+#include "config/parameter_group.h"
+#include "config/parameter_group_ids.h"
+
+#include "drivers/io.h"
 
 #include "adc.h"
 #include "adc_impl.h"
 
-#include "common/utils.h"
-
 //#define DEBUG_ADC_CHANNELS
 
-#ifdef USE_ADC
 adcOperatingConfig_t adcOperatingConfig[ADC_CHANNEL_COUNT];
 volatile uint16_t adcValues[ADC_CHANNEL_COUNT];
+
+PG_REGISTER_WITH_RESET_FN(adcConfig_t, adcConfig, PG_ADC_CONFIG, 0);
+
+void pgResetFn_adcConfig(adcConfig_t *adcConfig)
+{
+    adcConfig->device = ADC_DEV_TO_CFG(adcDeviceByInstance(ADC_INSTANCE));
+
+#ifdef VBAT_ADC_PIN
+    adcConfig->vbat.enabled = true;
+    adcConfig->vbat.ioTag = IO_TAG(VBAT_ADC_PIN);
+#endif
+
+#ifdef EXTERNAL1_ADC_PIN
+    adcConfig->external1.enabled = true;
+    adcConfig->external1.ioTag = IO_TAG(EXTERNAL1_ADC_PIN);
+#endif
+
+#ifdef CURRENT_METER_ADC_PIN
+    adcConfig->current.enabled = true;
+    adcConfig->current.ioTag = IO_TAG(CURRENT_METER_ADC_PIN);
+#endif
+
+#ifdef RSSI_ADC_PIN
+    adcConfig->rssi.enabled = true;
+    adcConfig->rssi.ioTag = IO_TAG(RSSI_ADC_PIN);
+#endif
+}
 
 uint8_t adcChannelByTag(ioTag_t ioTag)
 {
@@ -102,12 +133,5 @@ bool adcVerifyPin(ioTag_t tag, ADCDevice device)
     }
 
     return false;
-}
-
-#else
-uint16_t adcGetChannel(uint8_t channel)
-{
-    UNUSED(channel);
-    return 0;
 }
 #endif

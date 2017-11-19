@@ -15,24 +15,15 @@
  * along with Cleanflight.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
+#include <stdbool.h>
 #include <stdint.h>
 
+#include "platform.h"
+
 #include "config/parameter_group.h"
-#include "drivers/io_types.h"
+#include "config/parameter_group_ids.h"
 
-typedef struct flashGeometry_s {
-    uint16_t sectors; // Count of the number of erasable blocks on the device
-    const uint16_t pageSize; // In bytes
-    uint32_t sectorSize; // This is just pagesPerSector * pageSize
-    uint32_t totalSize;  // This is just sectorSize * sectors
-    uint16_t pagesPerSector;
-} flashGeometry_t;
+#include "vcd.h"
 
-typedef struct flashConfig_s {
-    ioTag_t csTag;
-    uint8_t spiDevice;
-} flashConfig_t;
-
-PG_DECLARE(flashConfig_t, flashConfig);
+// no template required since defaults are zero
+PG_REGISTER(vcdProfile_t, vcdProfile, PG_VCD_CONFIG, 0);

@@ -30,6 +30,7 @@
 #include "common/maths.h"
 #include "common/utils.h"
 
+#include "drivers/adc.h"
 #include "drivers/cc2500.h"
 #include "drivers/io.h"
 #include "drivers/system.h"
@@ -173,8 +174,13 @@ static void frSkyTelemetryWriteSpi(uint8_t ch)
 
 static void telemetry_build_frame(uint8_t *packet)
 {
+#ifdef USE_ADC
     const uint16_t adcExternal1Sample = adcGetChannel(ADC_EXTERNAL1);
     const uint16_t adcRssiSample = adcGetChannel(ADC_RSSI);
+#else
+    const uint16_t adcExternal1Sample = 0;
+    const uint16_t adcRssiSample = 0;
+#endif
     uint8_t bytes_used = 0;
     telemetry_id = packet[4];
     frame[0] = 0x11; // length

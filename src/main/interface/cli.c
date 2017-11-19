@@ -57,6 +57,7 @@ extern uint8_t __config_end;
 #include "config/parameter_group_ids.h"
 
 #include "drivers/accgyro/accgyro.h"
+#include "drivers/adc.h"
 #include "drivers/buf_writer.h"
 #include "drivers/bus_i2c.h"
 #include "drivers/bus_spi.h"
@@ -73,6 +74,7 @@ extern uint8_t __config_end;
 #include "drivers/serial.h"
 #include "drivers/serial_escserial.h"
 #include "drivers/sonar_hcsr04.h"
+#include "drivers/sound_beeper.h"
 #include "drivers/stack_check.h"
 #include "drivers/system.h"
 #include "drivers/transponder_ir.h"

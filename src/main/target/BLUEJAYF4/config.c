@@ -26,9 +26,9 @@
 
 #include "config/feature.h"
 
+#include "drivers/adc.h"
 #include "drivers/io.h"
-
-#include "fc/config.h"
+#include "drivers/sound_beeper.h"
 
 #include "sensors/acceleration.h"
 #include "sensors/gyro.h"

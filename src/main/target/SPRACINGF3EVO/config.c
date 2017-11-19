@@ -21,7 +21,7 @@
 
 #include "common/axis.h"
 
-#include "fc/config.h"
+#include "drivers/sdcard.h"
 
 #include "flight/mixer.h"
 #include "flight/pid.h"

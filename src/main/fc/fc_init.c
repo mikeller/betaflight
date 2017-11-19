@@ -49,6 +49,7 @@
 #include "drivers/serial_softserial.h"
 #include "drivers/serial_uart.h"
 #include "drivers/accgyro/accgyro.h"
+#include "drivers/camera_control.h"
 #include "drivers/compass/compass.h"
 #include "drivers/pwm_esc_detect.h"
 #include "drivers/rx_pwm.h"
@@ -66,9 +67,9 @@
 #include "drivers/transponder_ir.h"
 #include "drivers/exti.h"
 #include "drivers/max7456.h"
+#include "drivers/vcd.h"
 #include "drivers/vtx_rtc6705.h"
 #include "drivers/vtx_common.h"
-#include "drivers/camera_control.h"
 
 #include "fc/config.h"
 #include "fc/fc_init.h"

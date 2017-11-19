@@ -17,6 +17,8 @@
 
 #pragma once
 
+#include "config/parameter_group.h"
+
 #include "drivers/io_types.h"
 
 #ifndef ADC_INSTANCE
@@ -81,6 +83,8 @@ typedef struct adcConfig_s {
     adcChannelConfig_t external1;
     int8_t device; // ADCDevice
 } adcConfig_t;
+
+PG_DECLARE(adcConfig_t, adcConfig);
 
 void adcInit(const adcConfig_t *config);
 uint16_t adcGetChannel(uint8_t channel);

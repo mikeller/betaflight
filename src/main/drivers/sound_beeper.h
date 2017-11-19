@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include "config/parameter_group.h"
 #include "drivers/io_types.h"
 
 #ifdef BEEPER
@@ -35,6 +36,8 @@ typedef struct beeperDevConfig_s {
     uint8_t isOpenDrain;
     uint16_t frequency;
 } beeperDevConfig_t;
+
+PG_DECLARE(beeperDevConfig_t, beeperDevConfig);
 
 void systemBeep(bool on);
 void systemBeepToggle(void);

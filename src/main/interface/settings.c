@@ -31,11 +31,16 @@
 #include "config/parameter_group.h"
 #include "config/parameter_group_ids.h"
 
+#include "drivers/adc.h"
 #include "drivers/bus_i2c.h"
 #include "drivers/bus_spi.h"
-#include "drivers/light_led.h"
 #include "drivers/camera_control.h"
+#include "drivers/light_led.h"
 #include "drivers/max7456.h"
+#include "drivers/rx_pwm.h"
+#include "drivers/sdcard.h"
+#include "drivers/sound_beeper.h"
+#include "drivers/vcd.h"
 #include "drivers/vtx_common.h"
 
 #include "fc/config.h"

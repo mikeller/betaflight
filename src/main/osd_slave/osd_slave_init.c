@@ -53,6 +53,7 @@
 #include "drivers/timer.h"
 #include "drivers/transponder_ir.h"
 #include "drivers/usb_io.h"
+#include "drivers/vcd.h"
 
 #include "fc/config.h"
 #include "fc/rc_controls.h"

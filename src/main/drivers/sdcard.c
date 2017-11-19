@@ -22,6 +22,9 @@
 
 #ifdef USE_SDCARD
 
+#include "config/parameter_group.h"
+#include "config/parameter_group_ids.h"
+
 #include "drivers/nvic.h"
 #include "drivers/io.h"
 #include "dma.h"
@@ -118,6 +121,12 @@ static IO_t sdCardDetectPin = IO_NONE;
 #endif
 
 static IO_t sdCardCsPin = IO_NONE;
+
+PG_REGISTER_WITH_RESET_TEMPLATE(sdcardConfig_t, sdcardConfig, PG_SDCARD_CONFIG, 0);
+
+PG_RESET_TEMPLATE(sdcardConfig_t, sdcardConfig,
+    .useDma = false
+);
 
 void sdcardInsertionDetectDeinit(void)
 {

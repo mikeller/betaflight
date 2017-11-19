@@ -44,7 +44,9 @@
 #include "config/parameter_group.h"
 #include "config/parameter_group_ids.h"
 
+#include "drivers/flash.h"
 #include "drivers/time.h"
+#include "drivers/sdcard.h"
 
 #include "fc/config.h"
 

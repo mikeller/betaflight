@@ -30,6 +30,7 @@
 
 #include "drivers/light_led.h"
 #include "drivers/pwm_esc_detect.h"
+#include "drivers/vcd.h"
 
 #include "fc/config.h"
 #include "fc/controlrate_profile.h"

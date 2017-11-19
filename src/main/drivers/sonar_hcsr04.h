@@ -17,12 +17,15 @@
 
 #pragma once
 
+#include "config/parameter_group.h"
 #include "drivers/io_types.h"
 
 typedef struct sonarConfig_s {
     ioTag_t triggerTag;
     ioTag_t echoTag;
 } sonarConfig_t;
+
+PG_DECLARE(sonarConfig_t, sonarConfig);
 
 typedef struct sonarRange_s {
     int16_t maxRangeCm;

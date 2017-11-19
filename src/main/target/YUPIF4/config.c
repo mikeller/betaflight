@@ -22,8 +22,12 @@
 
 #ifdef USE_TARGET_CONFIG
 #include "blackbox/blackbox.h"
-#include "fc/config.h"
+
+#include "drivers/adc.h"
+#include "drivers/sound_beeper.h"
+
 #include "flight/pid.h"
+
 #include "telemetry/telemetry.h"
 
 #include "hardware_revision.h"

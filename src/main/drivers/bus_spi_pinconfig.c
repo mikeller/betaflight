@@ -54,8 +54,6 @@
 #define SPI3_MOSI_PIN   PB5
 #endif
 
-PG_DECLARE(spiPinConfig_t, spiPinConfig);
-
 PG_REGISTER_WITH_RESET_FN(spiPinConfig_t, spiPinConfig, PG_SPI_PIN_CONFIG, 0);
 
 typedef struct spiDefaultConfig_s {
