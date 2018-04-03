@@ -3809,6 +3809,9 @@ const clicmd_t cmdTable[] = {
 #endif
     CLI_COMMAND_DEF("defaults", "reset to defaults and reboot", "[nosave]", cliDefaults),
     CLI_COMMAND_DEF("diff", "list configuration changes from default", "[master|profile|rates|all] {showdefaults}", cliDiff),
+#ifdef USE_RESOURCE_MGMT
+    CLI_COMMAND_DEF("dma", "list dma utilisation", NULL, cliDma),
+#endif
 #ifdef USE_DSHOT
     CLI_COMMAND_DEF("dshotprog", "program DShot ESC(s)", "<index> <command>+", cliDshotProg),
 #endif
@@ -3852,6 +3855,9 @@ const clicmd_t cmdTable[] = {
     CLI_COMMAND_DEF("mode_color", "configure mode and special colors", NULL, cliModeColor),
 #endif
     CLI_COMMAND_DEF("motor",  "get/set motor", "<index> [<value>]", cliMotor),
+#ifdef USE_USB_MSC
+	CLI_COMMAND_DEF("msc", "switch into msc mode", NULL, cliMsc),
+#endif
     CLI_COMMAND_DEF("name", "name of craft", NULL, cliName),
 #ifndef MINIMAL_CLI
     CLI_COMMAND_DEF("play_sound", NULL, "[<index>]", cliPlaySound),
@@ -3860,7 +3866,6 @@ const clicmd_t cmdTable[] = {
     CLI_COMMAND_DEF("rateprofile", "change rate profile", "[<index>]", cliRateProfile),
 #ifdef USE_RESOURCE_MGMT
     CLI_COMMAND_DEF("resource", "show/set resources", NULL, cliResource),
-    CLI_COMMAND_DEF("dma", "list dma utilisation", NULL, cliDma),
 #endif
     CLI_COMMAND_DEF("rxfail", "show/set rx failsafe settings", NULL, cliRxFailsafe),
     CLI_COMMAND_DEF("rxrange", "configure rx channel ranges", NULL, cliRxRange),
@@ -3889,9 +3894,6 @@ const clicmd_t cmdTable[] = {
     CLI_COMMAND_DEF("version", "show version", NULL, cliVersion),
 #ifdef USE_VTX_CONTROL
     CLI_COMMAND_DEF("vtx", "vtx channels on switch", NULL, cliVtx),
-#endif
-#ifdef USE_USB_MSC
-	CLI_COMMAND_DEF("msc", "switch into msc mode", NULL, cliMsc),
 #endif
 };
 
