@@ -38,8 +38,6 @@
 #include "common/utils.h"
 
 #include "config/feature.h"
-#include "pg/pg.h"
-#include "pg/pg_ids.h"
 
 #include "drivers/accgyro/accgyro.h"
 #include "drivers/compass/compass.h"
@@ -49,6 +47,7 @@
 #include "fc/config.h"
 #include "fc/controlrate_profile.h"
 #include "fc/rc_controls.h"
+#include "fc/rc_modes.h"
 #include "fc/runtime_config.h"
 
 #include "flight/position.h"
@@ -63,6 +62,9 @@
 #include "io/motors.h"
 #include "io/gps.h"
 #include "io/serial.h"
+
+#include "pg/pg.h"
+#include "pg/pg_ids.h"
 
 #include "sensors/boardalignment.h"
 #include "sensors/sensors.h"
@@ -430,14 +432,41 @@ static void configureSmartPortTelemetryPort(void)
     }
 }
 
+#define SMARTPORT_SILENCE_REPEATS 10
+#define SMARTPORT_WRITE_COMMAND 0x31
+#define SMARTPORT_TELEMETRY_ADDRESS 0x0c20
+#define SMARTPORT_TELEMETRY_OFF 0x10
+#define SMARTPORT_TELEMETRY_ON 0x11
+
 void checkSmartPortTelemetryState(void)
 {
+    
+    static uint8_t smartPortIsSilenced = 0;
+
     if (telemetryState == TELEMETRY_STATE_INITIALIZED_SERIAL) {
+        if (isModeActivationConditionPresent(BOXTELEMETRY) && smartPortSerialPort) {
+            smartPortPayload_t payload = {
+                .frameId = SMARTPORT_WRITE_COMMAND,
+                .valueId = SMARTPORT_TELEMETRY_ADDRESS,
+            };
+            if (!IS_RC_MODE_ACTIVE(BOXTELEMETRY) && smartPortIsSilenced < SMARTPORT_SILENCE_REPEATS) {
+                payload.data = SMARTPORT_TELEMETRY_OFF;
+
+                smartPortIsSilenced++;
+            } else if (IS_RC_MODE_ACTIVE(BOXTELEMETRY) && smartPortIsSilenced) {
+                payload.data = SMARTPORT_TELEMETRY_ON;
+
+                smartPortIsSilenced--;
+            }
+
+            smartPortWriteFrame(&payload);
+        }
+
         bool enableSerialTelemetry = telemetryDetermineEnabledState(smartPortPortSharing);
 
         if (enableSerialTelemetry && !smartPortSerialPort) {
             configureSmartPortTelemetryPort();
-        } else if (!enableSerialTelemetry && smartPortSerialPort) {
+        } else if (!enableSerialTelemetry && smartPortSerialPort && (smartPortIsSilenced == SMARTPORT_SILENCE_REPEATS)) {
             freeSmartPortTelemetryPort();
         }
     }
