@@ -120,7 +120,11 @@
 #define USE_BARO_BMP085
 #define USE_BARO_BMP280
 #define USE_BARO_MS5611
+#if defined(DYSF4PRO)
+#define BARO_I2C_INSTANCE       (I2CDEV_1)
+#else
 #define BARO_I2C_INSTANCE       (I2CDEV_2)
+#endif
 
 #if defined(OMNIBUSF4SD)
 #define DEFAULT_BARO_SPI_BMP280
@@ -236,12 +240,21 @@
 #define USE_I2C_DEVICE_2
 #define I2C2_SCL                NONE // PB10, shared with UART3TX
 #define I2C2_SDA                NONE // PB11, shared with UART3RX
+
 #if defined(OMNIBUSF4) || defined(OMNIBUSF4SD)
 #define USE_I2C_DEVICE_3
 #define I2C3_SCL                NONE // PA8, PWM6
 #define I2C3_SDA                NONE // PC9, CH6
 #endif
+
+#if defined(DYSF4PRO)
+#define USE_I2C_DEVICE_1
+#define I2C1_SCL                PB8
+#define I2C1_SDA                PB9
+#define I2C_DEVICE              (I2CDEV_1)
+#else
 #define I2C_DEVICE              (I2CDEV_2)
+#endif
 
 #define USE_ADC
 #define ADC_INSTANCE            ADC2
