@@ -55,7 +55,7 @@ void pgResetFn_rxConfig(rxConfig_t *rxConfig)
         .rssi_offset = 0,
         .rssi_invert = 0,
         .rcInterpolation = RC_SMOOTHING_AUTO,
-        .rcInterpolationChannels = 0,
+        .rcInterpolationChannels = 2,
         .rcInterpolationInterval = 19,
         .fpvCamAngleDegrees = 0,
         .airModeActivateThreshold = 32,
