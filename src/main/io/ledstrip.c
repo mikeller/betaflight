@@ -1114,7 +1114,7 @@ void ledStripUpdate(timeUs_t currentTimeUs)
         bool updateNow = timActive & (1 << timId);
         (*layerTable[timId])(updateNow, timer);
     }
-    ws2811UpdateStrip((ledStripFormatRGB_e)ledStripConfig()->ledstrip_grb_rgb);
+    ws2811UpdateStrip((ledStripFormatRgb_e)ledStripConfig()->ledstrip_grb_rgb);
 }
 
 bool parseColor(int index, const char *colorConfig)
@@ -1209,6 +1209,6 @@ static void ledStripDisable(void)
 {
     setStripColor(&HSV(BLACK));
 
-    ws2811UpdateStrip((ledStripFormatRGB_e)ledStripConfig()->ledstrip_grb_rgb);
+    ws2811UpdateStrip((ledStripFormatRgb_e)ledStripConfig()->ledstrip_grb_rgb);
 }
 #endif

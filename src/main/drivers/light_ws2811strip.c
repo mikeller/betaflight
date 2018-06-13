@@ -112,7 +112,7 @@ static int16_t ledIndex;
 #define USE_FAST_DMA_BUFFER_IMPL
 #ifdef USE_FAST_DMA_BUFFER_IMPL
 
-STATIC_UNIT_TESTED void fastUpdateLEDDMABuffer(ledStripFormatRGB_e ledFormat, rgbColor24bpp_t *color)
+STATIC_UNIT_TESTED void fastUpdateLEDDMABuffer(ledStripFormatRgb_e ledFormat, rgbColor24bpp_t *color)
 {
     uint32_t packed_colour;
 
@@ -155,7 +155,7 @@ STATIC_UNIT_TESTED void updateLEDDMABuffer(uint8_t componentValue)
  * This method is non-blocking unless an existing LED update is in progress.
  * it does not wait until all the LEDs have been updated, that happens in the background.
  */
-void ws2811UpdateStrip(ledStripFormatRGB_e ledFormat)
+void ws2811UpdateStrip(ledStripFormatRgb_e ledFormat)
 {
     static rgbColor24bpp_t *rgb24;
 
