@@ -101,9 +101,20 @@
 // Support for iFlight OMNIBUS F4 V3
 // Has ICM20608 instead of MPU6000
 // OMNIBUSF4SD is linked with both MPU6000 and MPU6500 drivers
-#if defined (OMNIBUSF4SD) || defined(OMNIBUSF4BASE)
+#if defined (OMNIBUSF4SD) || defined(OMNIBUSF4BASE) || defined(DYSF4PRO)
 #define USE_ACC_SPI_MPU6500
 #define USE_GYRO_SPI_MPU6500
+
+#define MPU6500_CS_PIN          MPU6000_CS_PIN
+#define MPU6500_SPI_INSTANCE    MPU6000_SPI_INSTANCE
+
+#if defined(OMNIBUSF4SD)
+#define GYRO_MPU6500_ALIGN      GYRO_MPU6000_ALIGN
+#define ACC_MPU6500_ALIGN       ACC_MPU6000_ALIGN
+#else
+#define GYRO_MPU6500_ALIGN      CW90_DEG
+#define ACC_MPU6500_ALIGN       CW90_DEG
+#endif
 #endif
 
 // Dummy defines
@@ -277,6 +288,10 @@
 #define RANGEFINDER_HCSR04_TRIGGER_PIN     PA1
 #define RANGEFINDER_HCSR04_ECHO_PIN        PA8
 #define USE_RANGEFINDER_TF
+
+#if defined(DYSF4PRO)
+#define CAMERA_CONTROL_PIN      PC8
+#endif
 
 #define DEFAULT_FEATURES        (FEATURE_OSD)
 
