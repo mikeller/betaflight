@@ -80,7 +80,7 @@
 #include "telemetry/smartport.h"
 #include "telemetry/msp_shared.h"
 
-#define SMARTPORT_MIN_TELEMETRY_RESPONSE_DELAY_US 500
+#define SMARTPORT_MIN_TELEMETRY_RESPONSE_DELAY_US 250
 
 // these data identifiers are obtained from https://github.com/opentx/opentx/blob/master/radio/src/telemetry/frsky_hub.h
 enum
