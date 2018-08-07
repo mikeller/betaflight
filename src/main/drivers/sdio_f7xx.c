@@ -143,7 +143,8 @@
                                                     SDMMC_CMD_CPSMEN   | SDMMC_CMD_SDMMC1SUSPEND))
 
 #define SDMMC_INIT_CLK_DIV              ((uint8_t)0x76)
-#define SDMMC_CLK_DIV                   ((uint8_t)0x00)
+//#define SDMMC_CLK_DIV                   ((uint8_t)0x00)
+#define SDMMC_CLK_DIV                   ((uint8_t)0x03)
 
 
 #define SD_CMD_GO_IDLE_STATE            ((uint8_t)0)   // Resets the SD memory card.
