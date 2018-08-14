@@ -26,12 +26,13 @@
 
 #define ENABLE_DSHOT_DMAR       true
 
+#define CAMERA_CONTROL_PIN      PA2
+
 #define LED0_PIN                PB8
+#define LED1_PIN                PA14
 
-#define BEEPER                  PC13
+#define BEEPER                  PC14
 #define BEEPER_INVERTED
-
-//#define CAMERA_CONTROL_PIN      PB9
 
 #define USE_SPI
 #define USE_SPI_DEVICE_1
@@ -60,6 +61,15 @@
 #define I2C_DEVICE              (I2CDEV_1)
 #define I2C1_SCL                PB6
 #define I2C1_SDA                PB7
+
+#define USE_BARO
+#define USE_BARO_BMP085
+#define USE_BARO_BMP280
+#define USE_BARO_MS5611
+
+#define USE_MAG
+#define USE_MAG_HMC5883
+#define USE_MAG_QMC5883
 
 #define USE_SPI_DEVICE_3
 #define SPI3_SCK_PIN            PB3
@@ -92,7 +102,7 @@
 
 #define USE_UART2
 #define UART2_RX_PIN            PA3
-#define UART2_TX_PIN            PA2
+#define UART2_TX_PIN            NONE
 
 #define USE_UART3
 #define UART3_RX_PIN            PB11
@@ -132,4 +142,4 @@
 #define TARGET_IO_PORTD         (BIT(2))
 
 #define USABLE_TIMER_CHANNEL_COUNT 9
-#define USED_TIMERS             (TIM_N(1)|TIM_N(2)|TIM_N(3)|TIM_N(4))
+#define USED_TIMERS             (TIM_N(1)|TIM_N(2)|TIM_N(3)|TIM_N(4)|TIM_N(5))

@@ -104,17 +104,6 @@
 #if defined (OMNIBUSF4SD) || defined(OMNIBUSF4BASE) || defined(DYSF4PRO)
 #define USE_ACC_SPI_MPU6500
 #define USE_GYRO_SPI_MPU6500
-
-#define MPU6500_CS_PIN          MPU6000_CS_PIN
-#define MPU6500_SPI_INSTANCE    MPU6000_SPI_INSTANCE
-
-#if defined(OMNIBUSF4SD)
-#define GYRO_MPU6500_ALIGN      GYRO_MPU6000_ALIGN
-#define ACC_MPU6500_ALIGN       ACC_MPU6000_ALIGN
-#else
-#define GYRO_MPU6500_ALIGN      CW90_DEG
-#define ACC_MPU6500_ALIGN       CW90_DEG
-#endif
 #endif
 
 // Dummy defines
