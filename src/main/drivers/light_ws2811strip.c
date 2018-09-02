@@ -32,7 +32,7 @@
 
 #include "platform.h"
 
-#ifdef USE_LED_STRIP
+#if defined(USE_LED_STRIP) || defined(USE_LED_STRIP_SIMPLE)
 
 #include "build/build_config.h"
 
@@ -41,6 +41,7 @@
 
 #include "drivers/dma.h"
 #include "drivers/io.h"
+#include "drivers/light_ws2811strip_common.h"
 
 #include "light_ws2811strip.h"
 
@@ -57,26 +58,34 @@ volatile uint8_t ws2811LedDataTransferInProgress = 0;
 uint16_t BIT_COMPARE_1 = 0;
 uint16_t BIT_COMPARE_0 = 0;
 
+#if defined(USE_LED_STRIP_SIMPLE)
+static hsvColor_t ledColorBuffer[1];
+
+#define LED_COLOR_BUFFER(index) ledColorBuffer[0]
+#else
 static hsvColor_t ledColorBuffer[WS2811_LED_STRIP_LENGTH];
+
+#define LED_COLOR_BUFFER(index) ledColorBuffer[index]
+#endif
 
 void setLedHsv(uint16_t index, const hsvColor_t *color)
 {
-    ledColorBuffer[index] = *color;
+    LED_COLOR_BUFFER(index) = *color;
 }
 
 void getLedHsv(uint16_t index, hsvColor_t *color)
 {
-    *color = ledColorBuffer[index];
+    *color = LED_COLOR_BUFFER(index);
 }
 
 void setLedValue(uint16_t index, const uint8_t value)
 {
-    ledColorBuffer[index].v = value;
+    LED_COLOR_BUFFER(index).v = value;
 }
 
 void scaleLedValue(uint16_t index, const uint8_t scalePercent)
 {
-    ledColorBuffer[index].v = ((uint16_t)ledColorBuffer[index].v * scalePercent / 100);
+    LED_COLOR_BUFFER(index).v = ((uint16_t)LED_COLOR_BUFFER(index).v * scalePercent / 100);
 }
 
 void setStripColor(const hsvColor_t *color)
@@ -112,7 +121,6 @@ bool isWS2811LedStripReady(void)
 }
 
 STATIC_UNIT_TESTED uint16_t dmaBufferOffset;
-static int16_t ledIndex;
 
 #define USE_FAST_DMA_BUFFER_IMPL
 #ifdef USE_FAST_DMA_BUFFER_IMPL
@@ -162,22 +170,19 @@ STATIC_UNIT_TESTED void updateLEDDMABuffer(uint8_t componentValue)
  */
 void ws2811UpdateStrip(ledStripFormatRGB_e ledFormat)
 {
-    static rgbColor24bpp_t *rgb24;
-
     // don't wait - risk of infinite block, just get an update next time round
     if (ws2811LedDataTransferInProgress) {
         return;
     }
 
     dmaBufferOffset = 0;                // reset buffer memory index
-    ledIndex = 0;                       // reset led index
 
     // fill transmit buffer with correct compare values to achieve
     // correct pulse widths according to color values
+    unsigned ledIndex = 0;
+    rgbColor24bpp_t *rgb24 = hsvToRgb24(&ledColorBuffer[ledIndex]);
     while (ledIndex < WS2811_LED_STRIP_LENGTH)
     {
-        rgb24 = hsvToRgb24(&ledColorBuffer[ledIndex]);
-
 #ifdef USE_FAST_DMA_BUFFER_IMPL
         fastUpdateLEDDMABuffer(ledFormat, rgb24);
 #else
@@ -198,6 +203,10 @@ void ws2811UpdateStrip(ledStripFormatRGB_e ledFormat)
 #endif
 
         ledIndex++;
+
+#if !defined(USE_LED_STRIP_SIMPLE)
+        rgb24 = hsvToRgb24(&ledColorBuffer[ledIndex]);
+#endif
     }
 
     ws2811LedDataTransferInProgress = 1;

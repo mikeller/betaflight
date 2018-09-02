@@ -35,7 +35,7 @@
 #include "drivers/rcc.h"
 #include "drivers/timer.h"
 
-#include "light_ws2811strip.h"
+#include "light_ws2811strip_common.h"
 
 static IO_t ws2811IO = IO_NONE;
 bool ws2811Initialised = false;

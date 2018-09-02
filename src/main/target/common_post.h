@@ -167,3 +167,7 @@
 #if defined(USE_GPS_RESCUE)
 #define USE_GPS
 #endif
+
+#if defined(USE_LED_STRIP) && defined(USE_LED_STRIP_SIMPLE)
+#undef USE_LED_STRIP_SIMPLE
+#endif
