@@ -70,13 +70,13 @@ Betaflight has the following features:
 
 See: https://github.com/betaflight/betaflight/wiki
 
-## Support and Developers Channel
+## Support
 
-There's a dedicated Slack chat channel here:
+For help with the setup and configuration of Betaflight, or to hang out with fellow pilots, join our [Facebook group](https://www.facebook.com/groups/betaflightgroup/)
 
-https://slack.betaflight.com/
+For more development related questions and discussion, we also have a Slack project (registration [here](https://slack.betaflight.com/). Etiquette in Slack: Don't ask to ask and please wait around long enough for a reply - sometimes people are out flying, asleep or at work and can't answer immediately.
 
-Etiquette: Don't ask to ask and please wait around long enough for a reply - sometimes people are out flying, asleep or at work and can't answer immediately.
+Please keep in mind that GitHub itself is a platform for discussions and feedback related to the **development** of Betaflight, and do not open issues for questions around setup and configuration. Instead, use Facebook or Slack, or online resources such as RCGroups.
 
 ## Configuration Tool
 
