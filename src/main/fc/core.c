@@ -673,7 +673,7 @@ bool areSticksActive(uint8_t stickPercentLimit)
 #ifdef USE_RUNAWAY_TAKEOFF
 // allow temporarily disabling runaway takeoff prevention if we are connected
 // to the configurator and the ARMING_DISABLED_MSP flag is cleared.
-void runawayTakeoffTemporaryDisable(uint8_t disableFlag)
+void runawayTakeoffTemporaryDisable(bool disableFlag)
 {
     runawayTakeoffTemporarilyDisabled = disableFlag;
 }

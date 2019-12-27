@@ -2830,27 +2830,30 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, uint8_t cmdMSP, 
     case MSP_SET_ARMING_DISABLED:
         {
             const uint8_t command = sbufReadU8(src);
-            uint8_t disableRunawayTakeoff = 0;
-#ifndef USE_RUNAWAY_TAKEOFF
-            UNUSED(disableRunawayTakeoff);
-#endif
+#if defined(USE_RUNAWAY_TAKEOFF)
+            bool disableRunawayTakeoff = false;
             if (sbufBytesRemaining(src)) {
                 disableRunawayTakeoff = sbufReadU8(src);
             }
+#else
+            if (sbufBytesRemaining(src)) {
+                sbufReadU8(src);
+            }
+#endif
             if (command) {
                 mspArmingDisableByDescriptor(srcDesc);
                 setArmingDisabled(ARMING_DISABLED_MSP);
                 if (ARMING_FLAG(ARMED)) {
                     disarm();
                 }
-#ifdef USE_RUNAWAY_TAKEOFF
+#if defined(USE_RUNAWAY_TAKEOFF)
                 runawayTakeoffTemporaryDisable(false);
 #endif
             } else {
                 mspArmingEnableByDescriptor(srcDesc);
                 if (mspIsMspArmingEnabled()) {
                     unsetArmingDisabled(ARMING_DISABLED_MSP);
-#ifdef USE_RUNAWAY_TAKEOFF
+#if defined(USE_RUNAWAY_TAKEOFF)
                     runawayTakeoffTemporaryDisable(disableRunawayTakeoff);
 #endif
                 }
