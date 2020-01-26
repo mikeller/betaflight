@@ -307,7 +307,7 @@ static bool getBind2(uint8_t *packet)
 #endif
 
                                 for (uint8_t n = 0; n < 5; n++) {
-                                    if (packet[6 + n] == packet[ccLen - 3] || (packet[6 + n] == 0)) {
+                                    if (packet[6 + n] == packet[ccLen - 3] || (packet[6 + n] == 0) || packet[6 + n] == 255) {
                                         if (bindIdx >= 0x2D) {
                                             listLength = packet[5] + n;
 
