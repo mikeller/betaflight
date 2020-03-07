@@ -37,23 +37,29 @@ static IO_t bindPin;
 static bool bindRequested;
 static bool lastBindPinStatus;
 
-void rxSpiCommonIOInit(const rxSpiConfig_t *rxSpiConfig)
+void rxSpiCommonInit(const rxSpiConfig_t *rxSpiConfig)
 {
     if (rxSpiConfig->ledIoTag) {
         ledPin = IOGetByTag(rxSpiConfig->ledIoTag);
-        IOInit(ledPin, OWNER_LED, 0);
-        IOConfigGPIO(ledPin, IOCFG_OUT_PP);
-        ledInversion = rxSpiConfig->ledInversion;
-        rxSpiLedOff();
+        if (IOAllocate(ledPin, OWNER_LED, 0)) {
+            IOConfigGPIO(ledPin, IOCFG_OUT_PP);
+            ledInversion = rxSpiConfig->ledInversion;
+            rxSpiLedOff();
+        } else {
+            ledPin = IO_NONE;
+        }
     } else {
         ledPin = IO_NONE;
     }
 
     if (rxSpiConfig->bindIoTag) {
         bindPin = IOGetByTag(rxSpiConfig->bindIoTag);
-        IOInit(bindPin, OWNER_RX_SPI_BIND, 0);
-        IOConfigGPIO(bindPin, IOCFG_IPU);
-        lastBindPinStatus = IORead(bindPin);
+        if (IOAllocate(bindPin, OWNER_RX_SPI_BIND, 0)) {
+            IOConfigGPIO(bindPin, IOCFG_IPU);
+            lastBindPinStatus = IORead(bindPin);
+        } else {
+            bindPin = IO_NONE;
+        }
     } else {
         bindPin = IO_NONE;
     }

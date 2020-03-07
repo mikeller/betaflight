@@ -67,8 +67,6 @@ void mcoConfigure(MCODevice_e device, const mcoConfig_t *config)
         return;
     }
 
-    IO_t io;
-
 #if defined(STM32F4) || defined(STM32F7)
     // Only configure MCO2 with PLLI2SCLK as source for now.
     // Other MCO1 and other sources can easily be added.
@@ -78,24 +76,32 @@ void mcoConfigure(MCODevice_e device, const mcoConfig_t *config)
         return; // Not supported (yet)
 
     case MCODEV_2: // MCO2 on PC9
-        io = IOGetByTag(DEFIO_TAG_E(PC9));
-        IOInit(io, OWNER_MCO, 2);
+        {
+            IO_t mco2Io = IOGetByTag(DEFIO_TAG_E(PC9));
+            if (!IOAllocate(mco2Io, OWNER_MCO, 2)) {
+                return;
+            }
 #if defined(STM32F7)
-        HAL_RCC_MCOConfig(RCC_MCO2, RCC_MCO2SOURCE_PLLI2SCLK, RCC_MCODIV_4);
-        IOConfigGPIOAF(io, IO_CONFIG(GPIO_MODE_AF_PP, GPIO_SPEED_FREQ_VERY_HIGH,  GPIO_NOPULL), GPIO_AF0_MCO);
+            HAL_RCC_MCOConfig(RCC_MCO2, RCC_MCO2SOURCE_PLLI2SCLK, RCC_MCODIV_4);
+            IOConfigGPIOAF(mco2Io, IO_CONFIG(GPIO_MODE_AF_PP, GPIO_SPEED_FREQ_VERY_HIGH,  GPIO_NOPULL), GPIO_AF0_MCO);
 #else
-        // All F4s
-        RCC_MCO2Config(RCC_MCO2Source_PLLI2SCLK, RCC_MCO2Div_4);
-        IOConfigGPIOAF(io, IO_CONFIG(GPIO_Mode_AF, GPIO_Speed_50MHz, GPIO_OType_PP, GPIO_PuPd_NOPULL), GPIO_AF_MCO);
+            // All F4s
+            RCC_MCO2Config(RCC_MCO2Source_PLLI2SCLK, RCC_MCO2Div_4);
+            IOConfigGPIOAF(mco2Io, IO_CONFIG(GPIO_Mode_AF, GPIO_Speed_50MHz, GPIO_OType_PP, GPIO_PuPd_NOPULL), GPIO_AF_MCO);
 #endif
+        }
         break;
     }
 #elif defined(STM32G4)
     // G4 only supports one MCO on PA8
     UNUSED(device);
 
-    io = IOGetByTag(DEFIO_TAG_E(PA8));
-    IOInit(io, OWNER_MCO, 1);
+    IO_t mco1Io = IOGetByTag(DEFIO_TAG_E(PA8));
+    if (!IOAllocate(mco1Io, OWNER_MCO, 1)) {
+        IOCheckRelease(mco2Io, OWNER_MCO);
+
+        return;
+    }
     HAL_RCC_MCOConfig(RCC_MCO, mcoSources[config->source], mcoDividers[config->divider]);
 #else
 #error Unsupported MCU

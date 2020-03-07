@@ -423,7 +423,7 @@ bool frSkySpiInit(const rxSpiConfig_t *rxSpiConfig, rxRuntimeState_t *rxRuntimeS
 {
     UNUSED(extiConfig);
 
-    rxSpiCommonIOInit(rxSpiConfig);
+    rxSpiCommonInit(rxSpiConfig);
     if (!cc2500SpiInit()) {
         return false;
     }

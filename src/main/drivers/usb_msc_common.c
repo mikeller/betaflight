@@ -57,11 +57,14 @@ void mscInit(void)
 {
     if (usbDevConfig()->mscButtonPin) {
         mscButton = IOGetByTag(usbDevConfig()->mscButtonPin);
-        IOInit(mscButton, OWNER_USB_MSC_PIN, 0);
-        if (usbDevConfig()->mscButtonUsePullup) {
-            IOConfigGPIO(mscButton, IOCFG_IPU);
+        if (IOAllocate(mscButton, OWNER_USB_MSC_PIN, 0)) {
+            if (usbDevConfig()->mscButtonUsePullup) {
+                IOConfigGPIO(mscButton, IOCFG_IPU);
+            } else {
+                IOConfigGPIO(mscButton, IOCFG_IPD);
+            }
         } else {
-            IOConfigGPIO(mscButton, IOCFG_IPD);
+            mscButton = IO_NONE;
         }
     }
 }

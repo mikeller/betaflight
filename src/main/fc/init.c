@@ -645,7 +645,7 @@ void init(void)
             emfat_init_files();
         }
 #endif
-        if (mscStart() == 0) {
+        if (mscStart()) {
              mscWaitForButton();
         } else {
             systemResetFromMsc();

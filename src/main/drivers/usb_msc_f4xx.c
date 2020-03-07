@@ -53,13 +53,18 @@
 #include "usbd_cdc_vcp.h"
 #include "usb_io.h"
 
-uint8_t mscStart(void)
+bool mscStart(void)
 {
     //Start USB
     usbGenerateDisconnectPulse();
 
-    IOInit(IOGetByTag(IO_TAG(PA11)), OWNER_USB, 0);
-    IOInit(IOGetByTag(IO_TAG(PA12)), OWNER_USB, 0);
+    bool success = IOAllocate(IOGetByTag(IO_TAG(PA11)), OWNER_USB, 0);
+    success = success && IOAllocate(IOGetByTag(IO_TAG(PA12)), OWNER_USB, 0);
+    if (!success) {
+        IOCheckRelease(IOGetByTag(IO_TAG(PA11)), OWNER_USB);
+
+        return false;
+    }
 
     switch (blackboxConfig()->device) {
 #ifdef USE_SDCARD
@@ -76,7 +81,7 @@ uint8_t mscStart(void)
             break;
 #endif
         default:
-            return 1;
+            return false;
         }
         break;
 #endif
@@ -87,7 +92,7 @@ uint8_t mscStart(void)
         break;
 #endif
     default:
-        return 1;
+        return false;
     }
 
     USBD_Init(&USB_OTG_dev, USB_OTG_FS_CORE_ID, &MSC_desc, &USBD_MSC_cb, &USR_cb);
@@ -97,7 +102,7 @@ uint8_t mscStart(void)
     NVIC_SetPriority(SysTick_IRQn, NVIC_BUILD_PRIORITY(0, 0));
     NVIC_EnableIRQ(SysTick_IRQn);
 
-    return 0;
+    return true;
 }
 
 #endif

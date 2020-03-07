@@ -198,13 +198,14 @@ bool spekShouldBind(uint8_t spektrum_sat_bind)
     IO_t BindPlug = IOGetByTag(rxConfig()->spektrum_bind_plug_ioTag);
 
     if (BindPlug) {
-        IOInit(BindPlug, OWNER_RX_BIND, 0);
-        IOConfigGPIO(BindPlug, IOCFG_IPU);
+        if (IOAllocate(BindPlug, OWNER_RX_BIND, 0)) {
+            IOConfigGPIO(BindPlug, IOCFG_IPU);
 
-        // Check status of bind plug and exit if not active
-        delayMicroseconds(10);  // allow configuration to settle
-        if (IORead(BindPlug)) {
-            return false;
+            // Check status of bind plug and exit if not active
+            delayMicroseconds(10);  // allow configuration to settle
+            if (IORead(BindPlug)) {
+                return false;
+            }
         }
     }
 #endif // USE_SPEKTRUM_BIND_PLUG
@@ -264,7 +265,9 @@ void spektrumBind(rxConfig_t *rxConfig)
 
     IO_t bindIO = IOGetByTag(bindPin);
 
-    IOInit(bindIO, OWNER_RX_BIND, 0);
+    if (!IOAllocate(bindIO, OWNER_RX_BIND, 0)) {
+        return;
+    }
     IOConfigGPIO(bindIO, IOCFG_OUT_PP);
 
     LED1_ON;

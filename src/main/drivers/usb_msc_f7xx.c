@@ -53,7 +53,7 @@
 #include "usb_io.h"
 #include "usbd_msc.h"
 
-uint8_t mscStart(void)
+bool mscStart(void)
 {
     //Start USB
     usbGenerateDisconnectPulse();
@@ -82,7 +82,7 @@ uint8_t mscStart(void)
             break;
 #endif
         default:
-            return 1;
+            return false;
         }
         break;
 #endif
@@ -94,7 +94,7 @@ uint8_t mscStart(void)
 #endif
 
     default:
-        return 1;
+        return false;
     }
 
     USBD_Start(&USBD_Device);
@@ -104,7 +104,7 @@ uint8_t mscStart(void)
     NVIC_SetPriority(SysTick_IRQn, NVIC_BUILD_PRIORITY(0, 0));
     NVIC_EnableIRQ(SysTick_IRQn);
 
-    return 0;
+    return true;
 }
 
 #endif

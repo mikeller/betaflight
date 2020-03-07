@@ -381,7 +381,7 @@ bool spektrumSpiInit(const struct rxSpiConfig_s *rxConfig, struct rxRuntimeState
         return false;
     }
 
-    rxSpiCommonIOInit(rxConfig);
+    rxSpiCommonInit(rxConfig);
 
 
     rxRuntimeState->channelCount = DSM_MAX_CHANNEL_COUNT;

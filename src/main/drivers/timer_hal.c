@@ -593,13 +593,6 @@ void timerChClearCCFlag(const timerHardware_t *timHw)
     __HAL_TIM_CLEAR_FLAG(&timerHandle[timerIndex].Handle, TIM_IT_CCx(timHw->channel));
 }
 
-// configure timer channel GPIO mode
-void timerChConfigGPIO(const timerHardware_t* timHw, ioConfig_t mode)
-{
-    IOInit(IOGetByTag(timHw->tag), OWNER_TIMER, 0);
-    IOConfigGPIO(IOGetByTag(timHw->tag), mode);
-}
-
 // calculate input filter constant
 // TODO - we should probably setup DTS to higher value to allow reasonable input filtering
 //   - notice that prescaler[0] does use DTS for sampling - the sequence won't be monotonous anymore

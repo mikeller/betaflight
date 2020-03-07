@@ -274,11 +274,12 @@ void IOToggle(IO_t io)
 }
 
 // claim IO pin, set owner and resources
-void IOInit(IO_t io, resourceOwner_e owner, uint8_t index)
+static void IOInitStatic(IO_t io, resourceOwner_e owner, uint8_t index)
 {
     if (!io) {
         return;
     }
+
     ioRec_t *ioRec = IO_Rec(io);
     ioRec->owner = owner;
     ioRec->index = index;
@@ -298,8 +299,33 @@ resourceOwner_e IOGetOwner(IO_t io)
     if (!io) {
         return OWNER_FREE;
     }
+
     const ioRec_t *ioRec = IO_Rec(io);
     return ioRec->owner;
+}
+
+bool IOAllocate(IO_t io, resourceOwner_e owner, uint8_t index)
+{
+    if (!io) {
+        return false;
+    }
+
+    if (!IOGetOwner(io)) {
+        IOInitStatic(io, owner, index);
+
+        return true;
+    }
+
+    return false;
+}
+
+void IOCheckRelease(IO_t io, resourceOwner_e owner)
+{
+    if (!io || IOGetOwner(io) != owner) {
+        return;
+    }
+
+    IORelease(io);
 }
 
 bool IOIsFreeOrPreinit(IO_t io)

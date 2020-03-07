@@ -184,7 +184,9 @@ motorDevice_t *dshotPwmDevInit(const motorDevConfig_t *motorConfig, uint16_t idl
 
         if (timerHardware != NULL) {
             motors[motorIndex].io = IOGetByTag(tag);
-            IOInit(motors[motorIndex].io, OWNER_MOTOR, RESOURCE_INDEX(motorIndex));
+            if (!IOAllocate(motors[motorIndex].io, OWNER_MOTOR, RESOURCE_INDEX(motorIndex))) {
+                continue;
+            }
 
             if (pwmDshotMotorHardwareConfig(timerHardware,
                 motorIndex,

@@ -118,6 +118,8 @@ void IOToggle(IO_t io);
 void IOInit(IO_t io, resourceOwner_e owner, uint8_t index);
 void IORelease(IO_t io);  // unimplemented
 resourceOwner_e IOGetOwner(IO_t io);
+bool IOAllocate(IO_t io, resourceOwner_e owner, uint8_t index);
+void IOCheckRelease(IO_t io, resourceOwner_e owner);
 bool IOIsFreeOrPreinit(IO_t io);
 IO_t IOGetByTag(ioTag_t tag);
 

@@ -1546,7 +1546,6 @@ static void cliSerialPassthrough(char *cmdline)
 // XXX Review ESC pass through under refactored motor handling
 #ifdef USE_PWM_OUTPUT
     if (escSensorPassthrough) {
-        // pwmDisableMotors();
         motorDisable();
         delay(5);
         unsigned motorsCount = getMotorCount();
@@ -1556,7 +1555,6 @@ static void cliSerialPassthrough(char *cmdline)
                 const timerHardware_t *timerHardware = timerGetByTag(tag);
                 if (timerHardware) {
                     IO_t io = IOGetByTag(tag);
-                    IOInit(io, OWNER_MOTOR, 0);
                     IOConfigGPIO(io, IOCFG_OUT_PP);
                     if (timerHardware->output & TIMER_OUTPUT_INVERTED) {
                         IOLo(io);

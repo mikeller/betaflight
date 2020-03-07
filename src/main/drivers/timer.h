@@ -249,7 +249,6 @@ volatile timCCR_t* timerChCCR(const timerHardware_t* timHw);
 volatile timCCR_t* timerChCCRLo(const timerHardware_t* timHw);
 volatile timCCR_t* timerChCCRHi(const timerHardware_t* timHw);
 void timerChConfigOC(const timerHardware_t* timHw, bool outEnable, bool stateHigh);
-void timerChConfigGPIO(const timerHardware_t* timHw, ioConfig_t mode);
 
 void timerChCCHandlerInit(timerCCHandlerRec_t *self, timerCCHandlerCallback *fn);
 void timerChOvrHandlerInit(timerOvrHandlerRec_t *self, timerOvrHandlerCallback *fn);

@@ -62,9 +62,17 @@ void spiInitDevice(SPIDevice device, bool leadingEdge)
     RCC_ClockCmd(spi->rcc, ENABLE);
     RCC_ResetCmd(spi->rcc, ENABLE);
 
-    IOInit(IOGetByTag(spi->sck),  OWNER_SPI_SCK,  RESOURCE_INDEX(device));
-    IOInit(IOGetByTag(spi->miso), OWNER_SPI_MISO, RESOURCE_INDEX(device));
-    IOInit(IOGetByTag(spi->mosi), OWNER_SPI_MOSI, RESOURCE_INDEX(device));
+    bool success = IOAllocate(IOGetByTag(spi->sck), OWNER_SPI_SCK, RESOURCE_INDEX(device));
+    success = success && IOAllocate(IOGetByTag(spi->miso), OWNER_SPI_MISO, RESOURCE_INDEX(device));
+    success = success && IOAllocate(IOGetByTag(spi->mosi), OWNER_SPI_MOSI, RESOURCE_INDEX(device));
+
+    if (!success) {
+        IOCheckRelease(IOGetByTag(spi->sck), OWNER_SPI_SCK);
+        IOCheckRelease(IOGetByTag(spi->miso), OWNER_SPI_MISO);
+        IOCheckRelease(IOGetByTag(spi->mosi), OWNER_SPI_MOSI);
+
+        return;
+    }
 
 #if defined(STM32F3) || defined(STM32F4)
     IOConfigGPIOAF(IOGetByTag(spi->sck),  SPI_IO_AF_CFG, spi->af);

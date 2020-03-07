@@ -428,7 +428,7 @@ bool sfhssSpiInit(const rxSpiConfig_t *rxSpiConfig, rxRuntimeState_t *rxRuntimeS
 {
     UNUSED(extiConfig);
 
-    rxSpiCommonIOInit(rxSpiConfig);
+    rxSpiCommonInit(rxSpiConfig);
 
     cc2500SpiInit();
 

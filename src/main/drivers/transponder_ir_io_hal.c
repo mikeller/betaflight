@@ -119,7 +119,9 @@ void transponderIrHardwareInit(ioTag_t ioTag, transponder_t *transponder)
     static DMA_HandleTypeDef hdma_tim;
 
     transponderIO = IOGetByTag(ioTag);
-    IOInit(transponderIO, OWNER_TRANSPONDER, 0);
+    if (!IOAllocate(transponderIO, OWNER_TRANSPONDER, 0)) {
+        return;
+    }
     IOConfigGPIOAF(transponderIO, IO_CONFIG(GPIO_MODE_AF_PP, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_PULLDOWN), timerHardware->alternateFunction);
 
     __DMA1_CLK_ENABLE();
@@ -275,7 +277,9 @@ void transponderIrDisable(void)
     }
 
 
-    IOInit(transponderIO, OWNER_TRANSPONDER, 0);
+    if (!IOAllocate(transponderIO, OWNER_TRANSPONDER, 0)) {
+        return;
+    }
 
 #ifdef TRANSPONDER_INVERTED
     IOHi(transponderIO);

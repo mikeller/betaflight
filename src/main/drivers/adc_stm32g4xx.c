@@ -353,7 +353,9 @@ void adcInit(const adcConfig_t *config)
 
         // Configure a pin for ADC
         if (adcOperatingConfig[i].tag) {
-            IOInit(IOGetByTag(adcOperatingConfig[i].tag), OWNER_ADC_BATT + i, 0);
+            if (!IOAllocate(IOGetByTag(adcOperatingConfig[i].tag), OWNER_ADC_BATT + i, 0)) {
+                continue;
+            }
             IOConfigGPIO(IOGetByTag(adcOperatingConfig[i].tag), IO_CONFIG(GPIO_MODE_ANALOG, 0, GPIO_NOPULL));
         }
     }

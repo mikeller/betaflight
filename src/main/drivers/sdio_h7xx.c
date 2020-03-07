@@ -211,14 +211,27 @@ void SDIO_GPIO_Init(void)
     const IO_t d2 = IOGetByTag(sdioPin[SDIO_PIN_D2].pin);
     const IO_t d3 = IOGetByTag(sdioPin[SDIO_PIN_D3].pin);
 
-    IOInit(clk, OWNER_SDIO_CK, 0);
-    IOInit(cmd, OWNER_SDIO_CMD, 0);
-    IOInit(d0, OWNER_SDIO_D0, 0);
+    bool success = IOAllocate(clk, OWNER_SDIO_CK, 0);
+    success = success && IOAllocate(cmd, OWNER_SDIO_CMD, 0);
+    success = success && IOAllocate(d0, OWNER_SDIO_D0, 0);
 
     if (is4BitWidth) {
-        IOInit(d1, OWNER_SDIO_D1, 0);
-        IOInit(d2, OWNER_SDIO_D2, 0);
-        IOInit(d3, OWNER_SDIO_D3, 0);
+        success = success && IOAllocate(d1, OWNER_SDIO_D1, 0);
+        success = success && IOAllocate(d2, OWNER_SDIO_D2, 0);
+        success = success && IOAllocate(d3, OWNER_SDIO_D3, 0);
+    }
+
+    if (!success) {
+        IOCheckRelease(cmd, OWNER_SDIO_CMD);
+        IOCheckRelease(d0, OWNER_SDIO_D0);
+
+        if (is4BitWidth) {
+            IOCheckRelease(d1, OWNER_SDIO_D1);
+            IOCheckRelease(d2, OWNER_SDIO_D2);
+            IOCheckRelease(d3, OWNER_SDIO_D3);
+        }
+
+        return;
     }
 
     //

@@ -365,18 +365,28 @@ uartPort_t *serialUART(UARTDevice_e device, uint32_t baudRate, portMode_e mode, 
             ((options & SERIAL_INVERTED) || (options & SERIAL_BIDIR_PP)) ? GPIO_PULLDOWN : GPIO_PULLUP
         );
 
-        IOInit(txIO, OWNER_SERIAL_TX, RESOURCE_INDEX(device));
+        if (!IOAllocate(txIO, OWNER_SERIAL_TX, RESOURCE_INDEX(device))) {
+            return NULL;
+        }
         IOConfigGPIOAF(txIO, ioCfg, uartdev->tx.af);
     }
     else {
         if ((mode & MODE_TX) && txIO) {
-            IOInit(txIO, OWNER_SERIAL_TX, RESOURCE_INDEX(device));
+            if (!IOAllocate(txIO, OWNER_SERIAL_TX, RESOURCE_INDEX(device))) {
+                return NULL;
+            }
             IOConfigGPIOAF(txIO, IOCFG_AF_PP, uartdev->tx.af);
         }
 
         if ((mode & MODE_RX) && rxIO) {
-            IOInit(rxIO, OWNER_SERIAL_RX, RESOURCE_INDEX(device));
-            IOConfigGPIOAF(rxIO, IOCFG_AF_PP, uartdev->rx.af);
+            if (!IOAllocate(rxIO, OWNER_SERIAL_RX, RESOURCE_INDEX(device));
+                IOConfigGPIOAF(rxIO, IOCFG_AF_PP, uartdev->rx.af)) {
+                if ((mode & MODE_TX) && txIO) {
+                    IORelease(txIO);
+                }
+
+                return NULL;
+            }
         }
     }
 

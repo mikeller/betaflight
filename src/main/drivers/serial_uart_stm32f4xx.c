@@ -250,11 +250,15 @@ void uartDmaIrqHandler(dmaChannelDescriptor_t* descriptor)
 uartPort_t *serialUART(UARTDevice_e device, uint32_t baudRate, portMode_e mode, portOptions_e options)
 {
     uartDevice_t *uart = uartDevmap[device];
-    if (!uart) return NULL;
+    if (!uart) {
+        return NULL;
+    }
 
     const uartHardware_t *hardware = uart->hardware;
 
-    if (!hardware) return NULL; // XXX Can't happen !?
+    if (!hardware) {
+        return NULL; // XXX Can't happen !?
+    }
 
     uartPort_t *s = &(uart->port);
     s->port.vTable = uartVTable;
@@ -280,16 +284,26 @@ uartPort_t *serialUART(UARTDevice_e device, uint32_t baudRate, portMode_e mode, 
     }
 
     if (options & SERIAL_BIDIR) {
-        IOInit(txIO, OWNER_SERIAL_TX, RESOURCE_INDEX(device));
+        if (!IOAllocate(txIO, OWNER_SERIAL_TX, RESOURCE_INDEX(device))) {
+            return NULL;
+        }
         IOConfigGPIOAF(txIO, (options & SERIAL_BIDIR_PP) ? IOCFG_AF_PP : IOCFG_AF_OD, hardware->af);
     } else {
         if ((mode & MODE_TX) && txIO) {
-            IOInit(txIO, OWNER_SERIAL_TX, RESOURCE_INDEX(device));
+            if (!IOAllocate(txIO, OWNER_SERIAL_TX, RESOURCE_INDEX(device))) {
+                return NULL;
+            }
             IOConfigGPIOAF(txIO, IOCFG_AF_PP_UP, hardware->af);
         }
 
         if ((mode & MODE_RX) && rxIO) {
-            IOInit(rxIO, OWNER_SERIAL_RX, RESOURCE_INDEX(device));
+            if (!IOAllocate(rxIO, OWNER_SERIAL_RX, RESOURCE_INDEX(device))) {
+                if ((mode & MODE_TX) && txIO) {
+                    IOCheckRelease(txIO, OWNER_SERIAL_TX);
+                }
+
+                return NULL;
+            }
             IOConfigGPIOAF(rxIO, IOCFG_AF_PP_UP, hardware->af);
         }
     }

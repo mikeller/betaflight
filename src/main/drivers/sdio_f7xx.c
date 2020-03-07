@@ -1543,7 +1543,38 @@ static SD_Error_t SD_IsCardProgramming(uint8_t *pStatus)
   */
 void SD_Initialize_LL(DMA_Stream_TypeDef *dma)
 {
-     // Reset SDMMC1 Module
+    uint8_t is4BitWidth = sdioConfig()->use4BitWidth;
+
+    const IO_t d0 = IOGetByTag(IO_TAG(PC8));
+    const IO_t d1 = IOGetByTag(IO_TAG(PC9));
+    const IO_t d2 = IOGetByTag(IO_TAG(PC10));
+    const IO_t d3 = IOGetByTag(IO_TAG(PC11));
+    const IO_t clk = IOGetByTag(IO_TAG(PC12));
+    const IO_t cmd = IOGetByTag(IO_TAG(PD2));
+
+    bool success = IOAllocate(d0, OWNER_SDCARD, 0);
+    if (is4BitWidth) {
+        success = success && IOAllocate(d1, OWNER_SDCARD, 0);
+        success = success && IOAllocate(d2, OWNER_SDCARD, 0);
+        success = success && IOAllocate(d3, OWNER_SDCARD, 0);
+    }
+    success = success && IOAllocate(clk, OWNER_SDCARD, 0);
+    success = success && IOAllocate(cmd, OWNER_SDCARD, 0);
+
+    if (pinInitFailed) {
+        IOCheckRelease(d0, OWNER_SDCARD);
+        if (is4BitWidth) {
+            IOCheckRelease(d1, OWNER_SDCARD);
+            IOCheckRelease(d2, OWNER_SDCARD);
+            IOCheckRelease(d3, OWNER_SDCARD);
+        }
+        IOCheckRelease(clk, OWNER_SDCARD);
+        IOCheckRelease(cmd, OWNER_SDCARD);
+
+        return;
+    }
+
+    // Reset SDMMC1 Module
     RCC->APB2RSTR |=  RCC_APB2RSTR_SDMMC1RST;
     delay(1);
     RCC->APB2RSTR &= ~RCC_APB2RSTR_SDMMC1RST;
@@ -1557,24 +1588,6 @@ void SD_Initialize_LL(DMA_Stream_TypeDef *dma)
 
     //Configure Pins
     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN | RCC_AHB1ENR_GPIODEN;
-
-    uint8_t is4BitWidth = sdioConfig()->use4BitWidth;
-
-    const IO_t d0 = IOGetByTag(IO_TAG(PC8));
-    const IO_t d1 = IOGetByTag(IO_TAG(PC9));
-    const IO_t d2 = IOGetByTag(IO_TAG(PC10));
-    const IO_t d3 = IOGetByTag(IO_TAG(PC11));
-    const IO_t clk = IOGetByTag(IO_TAG(PC12));
-    const IO_t cmd = IOGetByTag(IO_TAG(PD2));
-
-    IOInit(d0, OWNER_SDCARD, 0);
-    if (is4BitWidth) {
-        IOInit(d1, OWNER_SDCARD, 0);
-        IOInit(d2, OWNER_SDCARD, 0);
-        IOInit(d3, OWNER_SDCARD, 0);
-    }
-    IOInit(clk, OWNER_SDCARD, 0);
-    IOInit(cmd, OWNER_SDCARD, 0);
 
 #define SDMMC_DATA       IO_CONFIG(GPIO_MODE_AF_PP, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_NOPULL)
 #define SDMMC_CMD        IO_CONFIG(GPIO_MODE_AF_PP, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_NOPULL)
