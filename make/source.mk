@@ -189,7 +189,11 @@ COMMON_SRC = \
             io/vtx_smartaudio.c \
             io/vtx_tramp.c \
             io/vtx_control.c \
-            ./lib/main/BoschSensortec/BMI270-Sensor-API/bmi270.c
+
+# It makes no sense to clog down the CI system by building this file for
+# every single target even though 95% of them do not even build the
+# only driver referencing this. Disabling this until this is solved.
+#            ./lib/main/BoschSensortec/BMI270-Sensor-API/bmi270.c
 
 COMMON_DEVICE_SRC = \
             $(CMSIS_SRC) \
