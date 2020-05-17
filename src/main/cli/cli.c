@@ -1571,7 +1571,6 @@ static void cliSerialPassthrough(const char *cmdName, char *cmdline)
 // XXX Review ESC pass through under refactored motor handling
 #ifdef USE_PWM_OUTPUT
     if (escSensorPassthrough) {
-        // pwmDisableMotors();
         motorDisable();
         delay(5);
         unsigned motorsCount = getMotorCount();
@@ -3838,7 +3837,6 @@ static void cliDshotProg(const char *cmdName, char *cmdline)
                 int command = atoi(pch);
                 if (command >= 0 && command < DSHOT_MIN_THROTTLE) {
                     if (firstCommand) {
-                        // pwmDisableMotors();
                         motorDisable();
 
                         if (command == DSHOT_CMD_ESC_INFO) {

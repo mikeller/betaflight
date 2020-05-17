@@ -132,7 +132,7 @@ void pwmShutdownPulsesForAllMotors(void)
     }
 }
 
-void pwmDisableMotors(void)
+static void pwmDisableMotors(void)
 {
     pwmShutdownPulsesForAllMotors();
 }
