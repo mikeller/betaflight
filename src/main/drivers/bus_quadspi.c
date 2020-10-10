@@ -65,8 +65,7 @@ bool quadSpiInit(QUADSPIDevice device)
         return false;
     case QUADSPIDEV_1:
 #ifdef USE_QUADSPI_DEVICE_1
-        quadSpiInitDevice(device);
-        return true;
+        return quadSpiInitDevice(device);
 #else
         break;
 #endif
@@ -156,7 +155,7 @@ const quadSpiHardware_t quadSpiHardware[] = {
     },
 #endif
 
-#ifdef STM32F745
+#if defined(STM32F7)
     {
         .device = QUADSPIDEV_1,
         .reg = QUADSPI,

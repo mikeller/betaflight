@@ -51,10 +51,9 @@ static int flashPartitions = 0;
 static bool flashQuadSpiInit(const flashConfig_t *flashConfig)
 {
     QUADSPI_TypeDef *quadSpiInstance = quadSpiInstanceByDevice(QUADSPI_CFG_TO_DEV(flashConfig->quadSpiDevice));
-    quadSpiSetDivisor(quadSpiInstance, QUADSPI_CLOCK_INITIALISATION);
 
     uint8_t readIdResponse[4];
-    bool status = quadSpiReceive1LINE(quadSpiInstance, FLASH_INSTRUCTION_RDID, 8, readIdResponse, sizeof(readIdResponse));
+    bool status = quadSpiSetDivisor(quadSpiInstance, QUADSPI_CLOCK_INITIALISATION) || quadSpiReceive1LINE(quadSpiInstance, FLASH_INSTRUCTION_RDID, 8, readIdResponse, sizeof(readIdResponse));
     if (!status) {
         return false;
     }

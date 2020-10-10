@@ -39,7 +39,6 @@ EXCLUDES        = stm32f7xx_hal_can.c \
                   stm32f7xx_hal_msp_template.c \
                   stm32f7xx_hal_nand.c \
                   stm32f7xx_hal_nor.c \
-                  stm32f7xx_hal_qspi.c \
                   stm32f7xx_hal_rng.c \
                   stm32f7xx_hal_sai.c \
                   stm32f7xx_hal_sai_ex.c \
@@ -176,6 +175,7 @@ MCU_COMMON_SRC = \
             drivers/light_ws2811strip_hal.c \
             drivers/transponder_ir_io_hal.c \
             drivers/bus_spi_ll.c \
+            drivers/bus_quadspi_hal.c \
             drivers/persistent.c \
             drivers/dshot_bitbang.c \
             drivers/dshot_bitbang_decode.c \

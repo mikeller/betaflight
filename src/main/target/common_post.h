@@ -386,3 +386,51 @@ extern uint8_t __config_end;
 #if defined(USE_RX_SPI) || defined (USE_SERIALRX_SRXL2)
 #define USE_RX_BIND
 #endif
+
+#if defined(USE_QUADSPI)
+// We need this currently to make the compiler happy
+#define USE_QUADSPI_DEVICE_1
+
+#if !defined(QUADSPI1_SCK_PIN)
+#define QUADSPI1_SCK_PIN        NONE
+#endif
+
+#if !defined(QUADSPI1_BK1_IO0_PIN)
+#define QUADSPI1_BK1_IO0_PIN    NONE
+#endif
+#if !defined(QUADSPI1_BK1_IO1_PIN)
+#define QUADSPI1_BK1_IO1_PIN    NONE
+#endif
+#if !defined(QUADSPI1_BK1_IO2_PIN)
+#define QUADSPI1_BK1_IO2_PIN    NONE
+#endif
+#if !defined(QUADSPI1_BK1_IO3_PIN)
+#define QUADSPI1_BK1_IO3_PIN    NONE
+#endif
+#if !defined(QUADSPI1_BK1_CS_PIN)
+#define QUADSPI1_BK1_CS_PIN     NONE
+#endif
+
+#if !defined(QUADSPI1_BK2_IO0_PIN)
+#define QUADSPI1_BK2_IO0_PIN    NONE
+#endif
+#if !defined(QUADSPI1_BK2_IO1_PIN)
+#define QUADSPI1_BK2_IO1_PIN    NONE
+#endif
+#if !defined(QUADSPI1_BK2_IO2_PIN)
+#define QUADSPI1_BK2_IO2_PIN    NONE
+#endif
+#if !defined(QUADSPI1_BK2_IO3_PIN)
+#define QUADSPI1_BK2_IO3_PIN    NONE
+#endif
+#if !defined(QUADSPI1_BK2_CS_PIN)
+#define QUADSPI1_BK2_CS_PIN     NONE
+#endif
+
+#if !defined(QUADSPI1_MODE)
+#define QUADSPI1_MODE QUADSPI_MODE_BK1_ONLY
+#endif
+#if !defined(QUADSPI1_CS_FLAGS)
+#define QUADSPI1_CS_FLAGS (QUADSPI_BK1_CS_HARDWARE | QUADSPI_BK2_CS_NONE | QUADSPI_CS_MODE_LINKED)
+#endif
+#endif

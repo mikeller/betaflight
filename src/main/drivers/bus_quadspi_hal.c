@@ -37,22 +37,24 @@
 
 #include "pg/bus_quadspi.h"
 
-static void Error_Handler(void) { while (1) { } }
-
-void quadSpiInitDevice(QUADSPIDevice device)
+bool quadSpiInitDevice(QUADSPIDevice device)
 {
     quadSpiDevice_t *quadSpi = &(quadSpiDevice[device]);
+
+    //if (!quadSpi->clk || !quadSpi->bk1IO0 || !quadSpi->bk1IO1 || !quadSpi->bk1IO2 || !quadSpi->bk1IO3 || !quadSpi->bk2IO0 || !quadSpi->bk2IO1 || !quadSpi->bk2IO2 || !quadSpi->bk2IO3 || quadSpi->bk2CS) {
+        //return false;
+    //}
 
     // Enable QUADSPI clock
     RCC_ClockCmd(quadSpi->rcc, ENABLE);
     RCC_ResetCmd(quadSpi->rcc, ENABLE);
 
     IOInit(IOGetByTag(quadSpi->clk),  OWNER_QUADSPI_CLK,  RESOURCE_INDEX(device));
-    IOInit(IOGetByTag(quadSpi->bk1IO0), OWNER_QUADSPI_BK1IO0, RESOURCE_INDEX(device));
-    IOInit(IOGetByTag(quadSpi->bk1IO1), OWNER_QUADSPI_BK1IO1, RESOURCE_INDEX(device));
-    IOInit(IOGetByTag(quadSpi->bk1IO2), OWNER_QUADSPI_BK1IO2, RESOURCE_INDEX(device));
-    IOInit(IOGetByTag(quadSpi->bk1IO3), OWNER_QUADSPI_BK1IO3, RESOURCE_INDEX(device));
-    IOInit(IOGetByTag(quadSpi->bk1CS), OWNER_QUADSPI_BK1CS, RESOURCE_INDEX(device));
+    //IOInit(IOGetByTag(quadSpi->bk1IO0), OWNER_QUADSPI_BK1IO0, RESOURCE_INDEX(device));
+    //IOInit(IOGetByTag(quadSpi->bk1IO1), OWNER_QUADSPI_BK1IO1, RESOURCE_INDEX(device));
+    //IOInit(IOGetByTag(quadSpi->bk1IO2), OWNER_QUADSPI_BK1IO2, RESOURCE_INDEX(device));
+    //IOInit(IOGetByTag(quadSpi->bk1IO3), OWNER_QUADSPI_BK1IO3, RESOURCE_INDEX(device));
+    //IOInit(IOGetByTag(quadSpi->bk1CS), OWNER_QUADSPI_BK1CS, RESOURCE_INDEX(device));
 
     IOInit(IOGetByTag(quadSpi->bk2IO0), OWNER_QUADSPI_BK2IO0, RESOURCE_INDEX(device));
     IOInit(IOGetByTag(quadSpi->bk2IO1), OWNER_QUADSPI_BK2IO1, RESOURCE_INDEX(device));
@@ -60,24 +62,24 @@ void quadSpiInitDevice(QUADSPIDevice device)
     IOInit(IOGetByTag(quadSpi->bk2IO3), OWNER_QUADSPI_BK2IO3, RESOURCE_INDEX(device));
     IOInit(IOGetByTag(quadSpi->bk2CS), OWNER_QUADSPI_BK2CS, RESOURCE_INDEX(device));
 
-#if defined(STM32F745) || defined(STM32H7)
+#if defined(STM32F7) || defined(STM32H7)
     // clock is only on AF9
     // IO and CS lines are on AF9 and AF10
     IOConfigGPIOAF(IOGetByTag(quadSpi->clk), QUADSPI_IO_AF_CLK_CFG, GPIO_AF9_QUADSPI);
-    IOConfigGPIOAF(IOGetByTag(quadSpi->bk1IO0), QUADSPI_IO_AF_BK_IO_CFG, quadSpi->bk1IO0AF);
-    IOConfigGPIOAF(IOGetByTag(quadSpi->bk1IO1), QUADSPI_IO_AF_BK_IO_CFG, quadSpi->bk1IO1AF);
-    IOConfigGPIOAF(IOGetByTag(quadSpi->bk1IO2), QUADSPI_IO_AF_BK_IO_CFG, quadSpi->bk1IO2AF);
-    IOConfigGPIOAF(IOGetByTag(quadSpi->bk1IO3), QUADSPI_IO_AF_BK_IO_CFG, quadSpi->bk1IO3AF);
+    //IOConfigGPIOAF(IOGetByTag(quadSpi->bk1IO0), QUADSPI_IO_AF_BK_IO_CFG, quadSpi->bk1IO0AF);
+    //IOConfigGPIOAF(IOGetByTag(quadSpi->bk1IO1), QUADSPI_IO_AF_BK_IO_CFG, quadSpi->bk1IO1AF);
+    //IOConfigGPIOAF(IOGetByTag(quadSpi->bk1IO2), QUADSPI_IO_AF_BK_IO_CFG, quadSpi->bk1IO2AF);
+    //IOConfigGPIOAF(IOGetByTag(quadSpi->bk1IO3), QUADSPI_IO_AF_BK_IO_CFG, quadSpi->bk1IO3AF);
     IOConfigGPIOAF(IOGetByTag(quadSpi->bk2IO0), QUADSPI_IO_AF_BK_IO_CFG, quadSpi->bk2IO0AF);
     IOConfigGPIOAF(IOGetByTag(quadSpi->bk2IO1), QUADSPI_IO_AF_BK_IO_CFG, quadSpi->bk2IO1AF);
     IOConfigGPIOAF(IOGetByTag(quadSpi->bk2IO2), QUADSPI_IO_AF_BK_IO_CFG, quadSpi->bk2IO2AF);
     IOConfigGPIOAF(IOGetByTag(quadSpi->bk2IO3), QUADSPI_IO_AF_BK_IO_CFG, quadSpi->bk2IO3AF);
 
-    if ((quadSpiConfig(device)->csFlags & QUADSPI_BK1_CS_MASK) == QUADSPI_BK1_CS_HARDWARE) {
-        IOConfigGPIOAF(IOGetByTag(quadSpi->bk1CS), QUADSPI_IO_AF_BK_CS_CFG, quadSpi->bk1CSAF);
-    } else {
-        IOConfigGPIO(IOGetByTag(quadSpi->bk1CS), QUADSPI_IO_BK_CS_CFG);
-    }
+    //if ((quadSpiConfig(device)->csFlags & QUADSPI_BK1_CS_MASK) == QUADSPI_BK1_CS_HARDWARE) {
+        //IOConfigGPIOAF(IOGetByTag(quadSpi->bk1CS), QUADSPI_IO_AF_BK_CS_CFG, quadSpi->bk1CSAF);
+    //} else {
+        //IOConfigGPIO(IOGetByTag(quadSpi->bk1CS), QUADSPI_IO_BK_CS_CFG);
+    //}
 
     if ((quadSpiConfig(device)->csFlags & QUADSPI_BK2_CS_MASK) == QUADSPI_BK2_CS_HARDWARE) {
         IOConfigGPIOAF(IOGetByTag(quadSpi->bk2CS), QUADSPI_IO_AF_BK_CS_CFG, quadSpi->bk2CSAF);
@@ -112,10 +114,12 @@ void quadSpiInitDevice(QUADSPIDevice device)
     }
 
     // Init QUADSPI hardware
-    if (HAL_QSPI_Init(&quadSpi->hquadSpi) != HAL_OK)
-    {
-      Error_Handler();
+    if (HAL_QSPI_Init(&quadSpi->hquadSpi) != HAL_OK) {
+      return false;
+      //Error_Handler();
     }
+
+    return true;
 }
 
 static const uint32_t quadSpi_addressSizeMap[] = {
@@ -478,12 +482,12 @@ bool quadSpiInstructionWithData1LINE(QUADSPI_TypeDef *instance, uint8_t instruct
     return true;
 }
 
-void quadSpiSetDivisor(QUADSPI_TypeDef *instance, uint16_t divisor)
+bool quadSpiSetDivisor(QUADSPI_TypeDef *instance, uint16_t divisor)
 {
     QUADSPIDevice device = quadSpiDeviceByInstance(instance);
-    if (HAL_QSPI_DeInit(&quadSpiDevice[device].hquadSpi) != HAL_OK)
-    {
-        Error_Handler();
+    if (HAL_QSPI_DeInit(&quadSpiDevice[device].hquadSpi) != HAL_OK) {
+        return false;
+        //Error_Handler();
     }
 
     quadSpiDevice_t *quadSpi = &(quadSpiDevice[device]);
@@ -491,5 +495,7 @@ void quadSpiSetDivisor(QUADSPI_TypeDef *instance, uint16_t divisor)
     quadSpi->hquadSpi.Init.ClockPrescaler = divisor;
 
     HAL_QSPI_Init(&quadSpi->hquadSpi);
+
+    return true;
 }
 #endif

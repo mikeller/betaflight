@@ -40,7 +40,7 @@
 
 #ifdef USE_QUADSPI
 
-#if !(defined(STM32F745) || defined(STM32H7))
+#if !(defined(STM32F7) || defined(STM32H7))
 #error Quad SPI unsupported on this MCU
 #endif
 
@@ -105,7 +105,7 @@ typedef enum {
 void quadSpiPreInit(void);
 
 bool quadSpiInit(QUADSPIDevice device);
-void quadSpiSetDivisor(QUADSPI_TypeDef *instance, uint16_t divisor);
+bool quadSpiSetDivisor(QUADSPI_TypeDef *instance, uint16_t divisor);
 
 bool quadSpiTransmit1LINE(QUADSPI_TypeDef *instance, uint8_t instruction, uint8_t dummyCycles, const uint8_t *out, int length);
 bool quadSpiReceive1LINE(QUADSPI_TypeDef *instance, uint8_t instruction, uint8_t dummyCycles, uint8_t *in, int length);
