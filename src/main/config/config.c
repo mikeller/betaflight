@@ -535,8 +535,17 @@ static void validateAndFixConfig(void)
         for (unsigned i = 0; i < PID_PROFILE_COUNT; i++) {
             pidProfilesMutable(i)->idle_min_rpm = 0;
         }
-    }
+	}
 #endif // USE_DYN_IDLE
+
+#if defined(USE_AIRMODE_LPF)
+	if (motorConfig()->dev.useDshotTelemetry) {
+		// Disable transient throttle limit if Dshot RPM feedback is enabled, as dynamic idle is available as its successor in this case
+        for (unsigned i = 0; i < PID_PROFILE_COUNT; i++) {
+            pidProfilesMutable(i)->transient_throttle_limit = 0;
+        }
+	}
+#endif // USE_AIRMODE_LPF
 #endif // USE_DSHOT_TELEMETRY
 #endif // USE_DSHOT
 
