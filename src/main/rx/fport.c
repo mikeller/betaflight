@@ -81,6 +81,7 @@ enum {
     DEBUG_FPORT_ERROR_CHECKSUM,
     DEBUG_FPORT_ERROR_TYPE,
     DEBUG_FPORT_ERROR_TYPE_SIZE,
+    DEBUG_FPORT2_ERROR_SHORT_INTERVAL,
 };
 
 enum {
@@ -123,8 +124,13 @@ static const smartPortPayload_t emptySmartPortFrame = { .frameId = 0, .valueId =
 #define FPORT_FRAME_PAYLOAD_LENGTH_CONTROL (sizeof(uint8_t) + sizeof(fportControlData_t))
 #define FPORT_FRAME_PAYLOAD_LENGTH_TELEMETRY_REQUEST (sizeof(uint8_t) + sizeof(smartPortPayload_t))
 
+
+#define FPORT2_MINIMUM_FRAME_INTERVAL_US 150
+
+
 #define NUM_RX_BUFFERS 3
-#define BUFFER_SIZE (FPORT_REQUEST_FRAME_LENGTH + 2 * sizeof(uint8_t))
+//#define BUFFER_SIZE (FPORT_REQUEST_FRAME_LENGTH + 2 * sizeof(uint8_t))
+#define BUFFER_SIZE 37
 
 typedef struct fportBuffer_s {
     uint8_t data[BUFFER_SIZE];
@@ -143,7 +149,7 @@ static volatile bool clearToSend = false;
 static volatile uint8_t framePosition = 0;
 
 static smartPortPayload_t *mspPayload = NULL;
-static timeUs_t lastRcFrameReceivedMs = 0;
+static timeMs_t lastRcFrameReceivedMs = 0;
 
 static serialPort_t *fportPort;
 #ifdef USE_TELEMETRY_SMARTPORT
@@ -151,6 +157,7 @@ static bool telemetryEnabled = false;
 #endif
 
 static timeUs_t lastRcFrameTimeUs = 0;
+static timeUs_t lastLineActivityUs = 0;
 
 static void reportFrameError(uint8_t errorReason) {
     static volatile uint16_t frameErrors = 0;
@@ -161,14 +168,32 @@ static void reportFrameError(uint8_t errorReason) {
     DEBUG_SET(DEBUG_FPORT, DEBUG_FPORT_FRAME_LAST_ERROR, errorReason);
 }
 
-// Receive ISR callback
+static void fportCompleteFrameReceive(timeUs_t currentTimeUs, bool telemetryFrame)
+{
+    static timeUs_t lastFrameReceivedUs = 0;
+
+    const uint8_t nextWriteIndex = (rxBufferWriteIndex + 1) % NUM_RX_BUFFERS;
+    if (nextWriteIndex != rxBufferReadIndex) {
+        rxBuffer[rxBufferWriteIndex].length = framePosition - 1;
+        rxBufferWriteIndex = nextWriteIndex;
+    }
+
+    if (telemetryFrame) {
+        clearToSend = true;
+        lastTelemetryFrameReceivedUs = currentTimeUs;
+    }
+
+    DEBUG_SET(DEBUG_FPORT, DEBUG_FPORT_FRAME_INTERVAL, currentTimeUs - lastFrameReceivedUs);
+    lastFrameReceivedUs = currentTimeUs;
+}
+
+// Receive ISR callbacks
 static void fportDataReceive(uint16_t c, void *data)
 {
     UNUSED(data);
 
     static timeUs_t frameStartAt = 0;
     static bool escapedCharacter = false;
-    static timeUs_t lastFrameReceivedUs = 0;
     static bool telemetryFrame = false;
 
     const timeUs_t currentTimeUs = microsISR();
@@ -185,21 +210,9 @@ static void fportDataReceive(uint16_t c, void *data)
 
     if (val == FPORT_FRAME_MARKER) {
         if (framePosition > 1) {
-            const uint8_t nextWriteIndex = (rxBufferWriteIndex + 1) % NUM_RX_BUFFERS;
-            if (nextWriteIndex != rxBufferReadIndex) {
-                rxBuffer[rxBufferWriteIndex].length = framePosition - 1;
-                rxBufferWriteIndex = nextWriteIndex;
-            }
+            fportCompleteFrameReceive(currentTimeUs, telemetryFrame);
 
-            if (telemetryFrame) {
-                clearToSend = true;
-                lastTelemetryFrameReceivedUs = currentTimeUs;
-                telemetryFrame = false;
-            }
-
-            DEBUG_SET(DEBUG_FPORT, DEBUG_FPORT_FRAME_INTERVAL, currentTimeUs - lastFrameReceivedUs);
-            lastFrameReceivedUs = currentTimeUs;
-
+            telemetryFrame = false;
             escapedCharacter = false;
         }
 
@@ -230,6 +243,51 @@ static void fportDataReceive(uint16_t c, void *data)
             framePosition = framePosition + 1;
         }
     }
+}
+
+static void fport2DataReceive(uint16_t c, void *data)
+{
+    UNUSED(data);
+
+    static bool telemetryFrame = false;
+
+    const timeUs_t currentTimeUs = microsISR();
+
+    clearToSend = false;
+
+    if (framePosition == 0 && cmpTimeUs(currentTimeUs, lastLineActivityUs) <= FPORT2_MINIMUM_FRAME_INTERVAL_US) {
+        reportFrameError(DEBUG_FPORT2_ERROR_SHORT_INTERVAL);
+
+		return;
+	}
+
+    uint8_t val = (uint8_t)c;
+
+	if (framePosition == 0) {
+        rxBuffer[rxBufferWriteIndex].frameStartTimeUs = currentTimeUs;
+        rxBuffer[rxBufferWriteIndex].length = val;
+	} else if (framePosition == 1 && val == FPORT_FRAME_TYPE_TELEMETRY_REQUEST) {
+        telemetryFrame = true;
+    } else if (framePosition >= BUFFER_SIZE) {
+        framePosition = 0;
+
+        reportFrameError(DEBUG_FPORT_ERROR_OVERSIZE);
+
+		return;
+	}
+
+    rxBuffer[rxBufferWriteIndex].data[framePosition] = val;
+
+	if (framePosition == rxBuffer[rxBufferWriteIndex].length + 1) {
+	    fportCompleteFrameReceive(currentTimeUs, telemetryFrame);
+
+        telemetryFrame = false;
+		framePosition = 0;
+
+		return;
+	}
+
+	framePosition++;
 }
 
 #if defined(USE_TELEMETRY_SMARTPORT)
@@ -404,6 +462,19 @@ bool fportRxInit(const rxConfig_t *rxConfig, rxRuntimeState_t *rxRuntimeState)
     rxRuntimeState->rcProcessFrameFn = fportProcessFrame;
     rxRuntimeState->rcFrameTimeUsFn = fportFrameTimeUs;
 
+    serialReceiveCallbackPtr rxCallback;
+    switch (rxRuntimeState->serialrxProvider) {
+    case SERIALRX_FPORT:
+    default:
+        rxCallback = fportDataReceive;
+
+        break;
+    case SERIALRX_FPORT2:
+        rxCallback = fport2DataReceive;
+
+        break;
+    }
+
     const serialPortConfig_t *portConfig = findSerialPortConfig(FUNCTION_RX_SERIAL);
     if (!portConfig) {
         return false;
@@ -411,7 +482,7 @@ bool fportRxInit(const rxConfig_t *rxConfig, rxRuntimeState_t *rxRuntimeState)
 
     fportPort = openSerialPort(portConfig->identifier,
         FUNCTION_RX_SERIAL,
-        fportDataReceive,
+        rxCallback,
         NULL,
         FPORT_BAUDRATE,
         MODE_RXTX,

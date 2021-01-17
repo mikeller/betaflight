@@ -246,6 +246,7 @@ static bool serialRxInit(const rxConfig_t *rxConfig, rxRuntimeState_t *rxRuntime
 #endif
 #ifdef USE_SERIALRX_FPORT
     case SERIALRX_FPORT:
+    case SERIALRX_FPORT2:
         enabled = fportRxInit(rxConfig, rxRuntimeState);
         break;
 #endif
